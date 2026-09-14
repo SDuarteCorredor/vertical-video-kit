@@ -1,0 +1,30 @@
+{
+  "engine": "voicestudio",
+  "voice": "af_heart",
+  "model": "tts-1",
+  "rate": "+0%",
+  "tailSeconds": 0.35,
+  "_comment": "engine: voicestudio | edge | openai | elevenlabs. Run 'python scripts/voice.py --list-voices' to see what your engine offers. Write these lines to be HEARD, not read.",
+  "scenes": [
+    {
+      "id": "01-hook",
+      "text": "Most vertical videos lose the viewer in the first two seconds."
+    },
+    {
+      "id": "02-point",
+      "text": "The hook is the whole job. If your first sentence doesn't create a question in someone's head, nothing after it gets watched."
+    },
+    {
+      "id": "03-list",
+      "text": "Three that work: name the mistake out loud, promise one specific outcome, or start in the middle of the story and explain later."
+    },
+    {
+      "id": "04-stat",
+      "text": "And remember: around eighty percent of people watch with the sound off. If your captions are missing, so is your message."
+    },
+    {
+      "id": "05-cta",
+      "text": "Build it in code, and changing a line takes seconds instead of an afternoon."
+    }
+  ]
+}

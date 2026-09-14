@@ -1,0 +1,22 @@
+{
+  "name": "vertical-video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "check": "tsc --noEmit",
+    "still": "remotion still src/index.ts Short preview/frame.png",
+    "render": "remotion render src/index.ts Short output/video.mp4 --codec=h264 --crf=17"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.520",
+    "@remotion/google-fonts": "4.0.520",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.520"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.8",
+    "typescript": "5.9.3"
+  }
+}

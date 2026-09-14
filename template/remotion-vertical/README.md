@@ -1,0 +1,40 @@
+# Vertical video project
+
+Scaffolded by **vertical-video-kit**.
+
+```bash
+npm install                    # once
+python scripts/voice.py        # narration + scene timings
+python scripts/captions.py     # word-by-word captions
+npm run dev                    # Remotion Studio, live preview
+npm run render                 # output/video.mp4
+python scripts/publish.py      # upload/video.mp4, platform-ready
+```
+
+## The two files you edit
+
+| File | Holds |
+|---|---|
+| `src/content.ts` | Everything **seen** on screen |
+| `script.json` | Everything **said** out loud |
+
+They are separate on purpose. Screen text can be fragments; narration needs
+whole sentences. Scene ids must match between the two.
+
+`src/theme.ts` holds the entire visual identity — colors, type, spacing, and
+the platform safe areas. Rebranding is that one file.
+
+`src/timings.json` and `src/captions.json` are generated. Don't edit them.
+
+## Checking your work
+
+Rendering the whole video to look at one scene wastes minutes. Render a single
+frame instead:
+
+```bash
+npx remotion still src/index.ts Short preview/frame.png --frame=120
+```
+
+Set `SHOW_SAFE_AREAS = true` in `src/theme.ts` to see where TikTok and Reels
+draw their own interface, and make sure nothing you need read lands under it.
+Set it back to `false` before rendering.

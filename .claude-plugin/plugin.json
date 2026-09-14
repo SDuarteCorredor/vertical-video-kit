@@ -1,0 +1,17 @@
+{
+  "name": "vertical-video-kit",
+  "version": "1.0.0",
+  "description": "Make TikToks, Reels and Shorts in code: natural AI narration, word-by-word captions, and a real 1080x1920 Remotion render.",
+  "license": "MIT",
+  "keywords": [
+    "video",
+    "tiktok",
+    "instagram-reels",
+    "youtube-shorts",
+    "remotion",
+    "text-to-speech",
+    "captions",
+    "whisper",
+    "ffmpeg"
+  ]
+}

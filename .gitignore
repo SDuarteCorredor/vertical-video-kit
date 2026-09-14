@@ -1,0 +1,35 @@
+node_modules/
+out/
+output/
+dist/
+.remotion/
+
+# Generated media — regenerate with the scripts, never commit
+audio/
+public/audio/
+public/media/
+*.mp4
+*.mov
+*.mp3
+*.wav
+*.m4a
+*.webm
+!docs/**/*.mp4
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

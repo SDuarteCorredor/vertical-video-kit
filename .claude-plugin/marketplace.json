@@ -1,0 +1,13 @@
+{
+  "name": "vertical-video-kit",
+  "owner": {
+    "name": "SDuarteCorredor"
+  },
+  "plugins": [
+    {
+      "name": "vertical-video-kit",
+      "source": "./",
+      "description": "Short-form vertical video in code: narration that doesn't sound robotic, word-by-word captions, 9:16 Remotion renders, and long-video-to-clips."
+    }
+  ]
+}
