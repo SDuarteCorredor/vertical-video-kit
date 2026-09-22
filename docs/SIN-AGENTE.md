@@ -217,23 +217,43 @@ python scripts/publish.py      # upload/video.mp4, ya codificado para subir
 Cambiaste una frase? Vuelve a correr `voice.py` y `captions.py`. La escena se
 reajusta sola. Eso es todo lo que cuesta una corrección aquí.
 
-### Camino C — pegarle el link a Codex (o a cualquier agente)
+### Camino C — con Codex (o cualquier agente)
 
-Abres Codex CLI y le pegas esto:
+**Clona primero, y abre el agente adentro de la carpeta.** En ese orden:
+
+```bash
+git clone https://github.com/SDuarteCorredor/vertical-video-kit
+cd vertical-video-kit
+codex
+```
+
+Importa el orden. Codex lee el `AGENTS.md` de la carpeta donde arranca, y ese
+archivo **empieza** con el comando de instalación y con la instrucción de
+dejarte el visualizador abierto. Si abres Codex en una carpeta vacía y le pegas
+el link para que clone, puede que no alcance a leer el `AGENTS.md` en ese mismo
+turno y termine improvisando.
+
+Ya adentro, le dices:
 
 ```
-https://github.com/SDuarteCorredor/vertical-video-kit
-
-Clona este repositorio e instálalo.
+Instala esto y déjame el visualizador abierto.
 ```
 
-El repo trae un `AGENTS.md` en la raíz — el estándar que Codex, Cursor,
-opencode, Copilot y Windsurf leen solos — y ese archivo **arranca** con el
-comando de instalación y con la instrucción de dejarte el visualizador abierto.
-No tienes que explicarle nada más.
+Tres cosas que conviene saber antes, porque son fricción real y no fallas:
 
-Cuando termine debería decirte una dirección como `http://localhost:3000`. Esa
-es la vista previa: si el navegador no se abrió solo, pega esa dirección ahí.
+- **Codex pide permiso antes de correr cada comando.** Hay que decirle que sí.
+  Es lo normal, no es que algo esté mal.
+- **Codex no puede escribir una contraseña de administrador.** En Linux, si
+  Node o FFmpeg no están instalados, `install.py` no los va a poder instalar
+  desde ahí: te imprime el comando exacto (`sudo apt install ...`) para que lo
+  corras tú en una terminal normal, y después sigues. En Windows y macOS no
+  aplica, porque winget y brew no piden sudo.
+- **Si el visualizador no queda abierto**, ábrelo tú en una terminal normal:
+  `cd my-video && npm run dev`. Algunos agentes cierran los procesos que dejan
+  corriendo cuando termina el comando.
+
+Si prefieres saltarte todo eso: corre `python install.py` tú mismo en la
+terminal (Camino A o B) y usa Codex solo para escribir los textos.
 
 Después ya le puedes pedir el video en español normal:
 

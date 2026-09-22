@@ -50,6 +50,11 @@ def rule(title: str) -> None:
 def ask(question: str, assume_yes: bool) -> bool:
     if assume_yes:
         return True
+    # No terminal means an agent or a pipe is running this. Asking would
+    # raise, and silently answering "no" reads as a mysterious failure.
+    if not sys.stdin or not sys.stdin.isatty():
+        say(f"{question} — assuming yes (nothing here to ask).")
+        return True
     try:
         return (input(f"  {question} [Y/n] ").strip().lower() or "y")[0] in "ys"
     except (EOFError, KeyboardInterrupt):
@@ -75,19 +80,69 @@ def package_manager() -> str | None:
     return None
 
 
-def install_system(tool: str, manager: str) -> None:
+def sudo_prefix() -> list[str] | None:
+    """How to run a privileged command here, or None if we cannot.
+
+    `sudo` with no answerable password prompt blocks forever. That is fine in
+    a terminal, where someone types the password, and fatal inside a coding
+    agent, which has no way to type it and no way to show you why it hung.
+    So: root needs nothing, passwordless sudo is fine, and anything else means
+    we print the command instead of running it.
+    """
+    if IS_WINDOWS or os.geteuid() == 0:
+        return []
+    if not which("sudo"):
+        return None
+    try:
+        probe = subprocess.run(["sudo", "-n", "true"], capture_output=True,
+                               timeout=10)
+        return ["sudo", "-n"] if probe.returncode == 0 else None
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def install_command(tool: str, manager: str) -> list[str] | None:
+    """The command that installs `tool`, or None if this machine cannot."""
     winget, brew, apt, dnf, pacman = PACKAGES[tool]
-    commands = {
-        "winget": ["winget", "install", "--id", winget, "-e",
-                   "--accept-package-agreements", "--accept-source-agreements"],
-        "brew": ["brew", "install", brew],
-        "apt-get": ["sudo", "apt-get", "install", "-y", apt],
-        "dnf": ["sudo", "dnf", "install", "-y", dnf],
-        "pacman": ["sudo", "pacman", "-S", "--noconfirm", pacman],
-    }
+    if manager == "winget":
+        return ["winget", "install", "--id", winget, "-e",
+                "--accept-package-agreements", "--accept-source-agreements"]
+    if manager == "brew":
+        return ["brew", "install", brew]
+
+    prefix = sudo_prefix()
+    if prefix is None:
+        return None
+    return {
+        "apt-get": prefix + ["apt-get", "install", "-y", apt],
+        "dnf": prefix + ["dnf", "install", "-y", dnf],
+        "pacman": prefix + ["pacman", "-S", "--noconfirm", pacman],
+    }[manager]
+
+
+# The human-readable privileged command, for when we cannot run it ourselves.
+MANUAL_COMMANDS = {
+    "apt-get": "sudo apt-get install -y {package}",
+    "dnf": "sudo dnf install -y {package}",
+    "pacman": "sudo pacman -S {package}",
+}
+
+PACKAGE_INDEX = {"winget": 0, "brew": 1, "apt-get": 2, "dnf": 3, "pacman": 4}
+
+
+def install_system(tool: str, manager: str) -> bool:
+    command = install_command(tool, manager)
+    if command is None:
+        package = PACKAGES[tool][PACKAGE_INDEX[manager]]
+        say("This needs administrator rights, and there is no password prompt")
+        say("anyone could answer from here. Run it yourself, then start again:")
+        say("  " + MANUAL_COMMANDS[manager].format(package=package))
+        return False
     if manager == "apt-get":
-        subprocess.run(["sudo", "apt-get", "update", "-qq"], check=False)
-    subprocess.run(commands[manager], check=False)
+        prefix = sudo_prefix() or []
+        subprocess.run(prefix + ["apt-get", "update", "-qq"], check=False)
+    subprocess.run(command, check=False)
+    return True
 
 
 def node_too_old() -> str | None:

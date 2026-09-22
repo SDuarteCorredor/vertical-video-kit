@@ -91,9 +91,19 @@ npx skills add SDuarteCorredor/vertical-video-kit
 ```
 
 **Codex CLI, Cursor, opencode, Copilot, Windsurf** leen el
-[`AGENTS.md`](AGENTS.md) de la raíz. Pégale a cualquiera de ellos el link de
-este repositorio y dile "instala esto": el `AGENTS.md` arranca con el comando
-de instalación y le dice que te deje mirando el visualizador.
+[`AGENTS.md`](AGENTS.md) de la raíz, que arranca con el comando de instalación
+y le dice al agente que te deje mirando el visualizador. Clona primero y abre
+el agente **adentro** de la carpeta, para que alcance a leer ese archivo:
+
+```bash
+git clone https://github.com/SDuarteCorredor/vertical-video-kit
+cd vertical-video-kit
+codex          # y ahí: "Instala esto y déjame el visualizador abierto."
+```
+
+En Linux un agente no puede escribir una contraseña de sudo, así que instala
+Node y FFmpeg tú primero si faltan — está explicado en
+[`docs/SIN-AGENTE.md`](docs/SIN-AGENTE.md#camino-c--con-codex-o-cualquier-agente).
 
 **Gemini CLI** hay que apuntarlo. Crea `.gemini/settings.json`:
 

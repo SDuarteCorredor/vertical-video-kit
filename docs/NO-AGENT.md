@@ -214,23 +214,41 @@ python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 Changed a line? Re-run `voice.py` and `captions.py`. The scene re-times itself.
 That's what a correction costs here.
 
-### Route C — paste the link into Codex (or any agent)
+### Route C — with Codex (or any agent)
 
-Open Codex CLI and paste this:
+**Clone first, and start the agent inside the folder.** In that order:
+
+```bash
+git clone https://github.com/SDuarteCorredor/vertical-video-kit
+cd vertical-video-kit
+codex
+```
+
+The order matters. Codex reads the `AGENTS.md` of the folder it starts in, and
+that file **opens** with the install command and the instruction to leave you
+looking at the studio. Start Codex in an empty folder and paste the link for it
+to clone, and it may not read `AGENTS.md` in the same turn — then it improvises.
+
+Once you're in:
 
 ```
-https://github.com/SDuarteCorredor/vertical-video-kit
-
-Clone this repository and install it.
+Install this and leave the studio open for me.
 ```
 
-The repo ships an `AGENTS.md` at its root — the standard Codex, Cursor,
-opencode, Copilot and Windsurf read on their own — and that file **opens** with
-the install command and the instruction to leave you looking at the studio. You
-don't have to explain anything else.
+Three things worth knowing first — friction, not faults:
 
-When it finishes it should give you an address like `http://localhost:3000`.
-That's the preview; if the browser didn't open by itself, paste it there.
+- **Codex asks permission before every command.** Say yes. That's normal.
+- **Codex cannot type an administrator password.** On Linux, if Node or FFmpeg
+  are missing, `install.py` can't install them from in there: it prints the
+  exact `sudo apt install ...` command for you to run in a normal terminal, and
+  then you continue. Doesn't apply on Windows or macOS — winget and brew don't
+  need sudo.
+- **If the studio doesn't stay open**, open it yourself in a normal terminal:
+  `cd my-video && npm run dev`. Some agents kill the processes they leave
+  running when the command finishes.
+
+Prefer to skip all that? Run `python install.py` yourself in a terminal (Route
+A or B) and use Codex only to write the text.
 
 Then ask for the video in plain language:
 
