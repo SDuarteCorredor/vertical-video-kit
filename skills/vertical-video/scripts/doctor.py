@@ -30,7 +30,8 @@ INSTALL_HINTS = {
     "node": {
         "Windows": "winget install OpenJS.NodeJS.LTS",
         "Darwin": "brew install node",
-        "Linux": "see https://nodejs.org (or your package manager)",
+        "Linux": "sudo apt install nodejs npm  (if that gives you Node < 18, "
+                 "use nvm: https://github.com/nvm-sh/nvm)",
     },
     "ffmpeg": {
         "Windows": "winget install Gyan.FFmpeg",
@@ -83,6 +84,13 @@ def main() -> None:
     problems: list[str] = []
 
     print("\n  Required\n  " + "-" * 44)
+    version = sys.version_info
+    ok = version >= (3, 9)
+    print(f"  {'python':<16} {'ok' if ok else 'TOO OLD':<8} "
+          f"{version.major}.{version.minor}.{version.micro}")
+    if not ok:
+        problems.append("python 3.9+ — these scripts use syntax 3.8 cannot parse")
+
     for command in ("node", "npm", "ffmpeg", "ffprobe"):
         path = has_command(command)
         print(f"  {command:<16} {'ok' if path else 'MISSING'}")
@@ -90,6 +98,18 @@ def main() -> None:
             key = "node" if command in ("node", "npm") else "ffmpeg"
             hint = INSTALL_HINTS[key].get(system, INSTALL_HINTS[key]["Linux"])
             problems.append(f"{command} — install with:  {hint}")
+
+    node = has_command("node")
+    if node:
+        try:
+            raw = subprocess.run([node, "-v"], capture_output=True,
+                                 text=True).stdout.strip()
+            major = int(raw.lstrip("v").split(".")[0])
+            if major < 18:
+                print(f"  {'node version':<16} {'TOO OLD':<8} {raw}, Remotion needs 18+")
+                problems.append(f"node {raw} is below 18 — see https://nodejs.org")
+        except (ValueError, IndexError, OSError):
+            pass
 
     print("\n  Python packages\n  " + "-" * 44)
     for module, (package, why) in PIP_PACKAGES.items():
@@ -114,10 +134,19 @@ def main() -> None:
         print("\n  Fix these first\n  " + "-" * 44)
         for problem in problems:
             print(f"  · {problem}")
-        print()
+        setup = "setup.ps1" if system == "Windows" else "setup.sh"
+        print(f"\n  Or let the setup script do it:  {setup}")
+        print("  Full walkthrough: docs/NO-AGENT.md · docs/SIN-AGENTE.md\n")
         sys.exit(1)
 
-    print("\n  Ready.\n")
+    print("""
+  Ready.
+
+  Next:  python skills/vertical-video/scripts/wizard.py
+         (asks five questions, hands back a finished video)
+
+  No AI needed for any of this — see docs/NO-AGENT.md.
+""")
 
 
 if __name__ == "__main__":

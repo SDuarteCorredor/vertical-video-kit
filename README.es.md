@@ -3,14 +3,19 @@
 Haz TikToks, Reels y Shorts con código — locución que no suena a robot,
 subtítulos palabra por palabra y un render real de 1080×1920.
 
-Pensado para agentes de código (Claude Code, Cursor y cualquiera que lea
-skills), pero todos los scripts funcionan solos desde la terminal.
-
 <p align="center">
   <img src="docs/preview-hook.png" width="240" alt="Escena de gancho">
   <img src="docs/preview-list.png" width="240" alt="Escena de lista">
   <img src="docs/preview-stat.png" width="240" alt="Escena de dato">
 </p>
+
+> **No necesitas pagar ninguna IA para usar esto.** El kit es Python y Node. Un
+> agente de IA lo hace más rápido, pero todos los scripts funcionan solos desde
+> la terminal, y hay un asistente que te hace cinco preguntas y te entrega un
+> MP4 terminado. Ver **[¿Hay que pagar una IA?](#hay-que-pagar-una-ia)** o irte
+> directo a [`docs/SIN-AGENTE.md`](docs/SIN-AGENTE.md).
+>
+> [English](README.md) · [Prompts listos para copiar](docs/PROMPTS.es.md)
 
 ## Por qué
 
@@ -27,7 +32,7 @@ Tres problemas que resuelve de verdad:
 - **TTS que suena a TTS.** Casi siempre es el texto, no el motor. Cada línea
   se normaliza para el oído antes de llegar a la voz — siglas deletreadas,
   símbolos expandidos, puntuación que marca el ritmo — y puedes poner pausas
-  reales con `[pause:0.4]`. El motor por defecto corre local y gratis.
+  reales con `[pause:0.4]`. Los motores por defecto son gratis.
 - **Subtítulos puestos al final.** Se generan del audio que realmente se
   renderizó, así que el resaltado cae sobre la palabra que se está diciendo.
   El layout les reserva su franja desde el principio.
@@ -37,29 +42,58 @@ Tres problemas que resuelve de verdad:
 
 ## Instalación
 
-**Como skills de agente** — funciona con 75+ agentes vía
-[skills.sh](https://skills.sh):
+**Un solo comando**, en un computador donde no hay nada:
+
+```bash
+git clone https://github.com/SDuarteCorredor/vertical-video-kit
+cd vertical-video-kit
+
+bash setup.sh                                                  # macOS, Linux
+powershell -ExecutionPolicy Bypass -File setup.ps1             # Windows
+```
+
+Revisa si están Node, FFmpeg y Python, te pregunta antes de instalar cada uno,
+e instala los paquetes de Python. Si lo corres dos veces se salta lo que ya
+está.
+
+> ¿No tienes `git`? En la página del repositorio en GitHub: botón verde
+> **Code → Download ZIP**, y descomprímelo. Es lo mismo.
+
+<details>
+<summary><b>Instalarlo como skills de agente</b></summary>
+
+**75+ agentes** vía [skills.sh](https://skills.sh):
 
 ```bash
 npx skills add SDuarteCorredor/vertical-video-kit
 ```
 
-**Como plugin de Claude Code:**
+**Claude Code** (requiere plan pago):
 
 ```
 /plugin marketplace add SDuarteCorredor/vertical-video-kit
 /plugin install vertical-video-kit
 ```
 
-**O simplemente clónalo** y corre los scripts a mano:
+**Codex CLI, Cursor, opencode, Copilot, Windsurf** leen el
+[`AGENTS.md`](AGENTS.md) de la raíz — clonas el repo y lo agarran solos.
 
-```bash
-git clone https://github.com/SDuarteCorredor/vertical-video-kit
-cd vertical-video-kit
-python skills/vertical-video/scripts/doctor.py --install
+**Gemini CLI** hay que apuntarlo. Crea `.gemini/settings.json`:
+
+```json
+{ "context": { "fileName": ["AGENTS.md", "GEMINI.md"] } }
 ```
+</details>
 
 ## Para empezar
+
+**El asistente** — cinco preguntas, sin IA, sin configurar nada:
+
+```bash
+python skills/vertical-video/scripts/wizard.py
+```
+
+**O a mano:**
 
 ```bash
 python skills/vertical-video/scripts/new_project.py mi-video
@@ -74,6 +108,32 @@ npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, codificado para las plataformas
 ```
 
+**O que una IA te escriba los textos** — [`docs/PROMPTS.es.md`](docs/PROMPTS.es.md)
+tiene prompts para agentes y para cualquier chat gratuito, incluido un prompt
+maestro que devuelve los dos archivos listos para pegar.
+
+## ¿Hay que pagar una IA?
+
+No. Un agente edita los archivos y corre los comandos por ti; es cómodo y es
+completamente opcional.
+
+| Herramienta | ¿Gratis? | Qué hace falta |
+|---|---|---|
+| **Sin IA** | sí | nada — el asistente, o los dos archivos a mano |
+| **Cualquier chat web** (ChatGPT, Claude, Gemini, DeepSeek…) | sí | una cuenta gratis. Copiar y pegar de [`docs/PROMPTS.es.md`](docs/PROMPTS.es.md) |
+| **[Codex CLI](https://github.com/openai/codex)** | **sí, con límites** | cuenta gratis de ChatGPT. `npm i -g @openai/codex` |
+| **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** | **sí** | cuenta de Google, ~1.000 peticiones al día |
+| **GitHub Copilot** | plan gratuito limitado | cuenta de GitHub, dentro de VS Code |
+| **Claude Code** | **no** | plan pago de Claude (Pro, ~US$20/mes) o créditos de API |
+
+Codex CLI entra con una cuenta **gratuita** de ChatGPT: el plan gratis alcanza
+para tareas de código cortas y locales, que es el tamaño de lo que hay que
+hacer aquí. Claude Code es el que no es gratis — el plan gratuito de Claude no
+lo incluye.
+
+Paso a paso para un computador donde no hay nada instalado:
+[`docs/SIN-AGENTE.md`](docs/SIN-AGENTE.md).
+
 ## Qué trae
 
 | | |
@@ -82,10 +142,13 @@ python scripts/publish.py      # upload/video.mp4, codificado para las plataform
 | `skills/clip-cutter` | Video horizontal largo → clips verticales con subtítulos quemados |
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
+| `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `docs/SIN-AGENTE.md` | Instalar y correrlo sin IA, en Windows, macOS o Linux |
+| `docs/PROMPTS.es.md` | Prompts para agentes y para cualquier chat gratuito |
 
 Los `SKILL.md` están escritos para que también los lea una persona. Las reglas
-de diseño, los patrones de gancho y el oficio de la voz están en
-`skills/vertical-video/references/` (en inglés).
+de diseño, los patrones de gancho, el oficio de la voz y lo específico de los
+videos corporativos están en `skills/vertical-video/references/` (en inglés).
 
 ## Motores de voz
 
@@ -93,26 +156,27 @@ Se elige con `"engine"` en `script.json`. Intercambiables, misma interfaz.
 
 | Motor | Costo | Calidad | Necesita |
 |---|---|---|---|
+| `edge` | gratis | decente, se nota sintética | `pip install edge-tts` — nada más |
 | `voicestudio` | gratis | la mejor, y clona voces | [VoiceStudio](https://github.com/debpalash/VoiceStudio) corriendo local |
-| `edge` | gratis | decente, se nota sintética | `pip install edge-tts` |
 | `openai` | pago | muy natural | `OPENAI_API_KEY` |
 | `elevenlabs` | pago | la mejor comercial | `ELEVENLABS_API_KEY` |
 
-El de por defecto es local y gratis, y nada sale de la máquina.
+`edge` es el punto de partida sin instalar nada y sin cuenta. `voicestudio`
+suena mejor y también es gratis, pero es una app de escritorio que hay que
+dejar abierta — si no está corriendo, `voice.py` se pasa a `edge` y te avisa.
 
 **Para español:** usa el acento del país de la audiencia. Un video para
 Colombia narrado en español de España suena importado y distrae más de lo que
-uno esperaría.
+uno esperaría. `es-CO-SalomeNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
 
 ## Requisitos
 
 - **Node 18+** y **FFmpeg** — obligatorios
 - **Python 3.9+** — para los scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voz de respaldo, subtítulos,
-  descargas
+- `pip install edge-tts faster-whisper yt-dlp` — voz, subtítulos, descargas
 
-`python skills/vertical-video/scripts/doctor.py --install` revisa todo e
-instala lo que puede.
+`setup.sh` / `setup.ps1` se encargan de todo.
+`python skills/vertical-video/scripts/doctor.py` dice qué falta.
 
 ## Construido sobre
 
@@ -131,8 +195,11 @@ umbral. Lo demás es gratis.
 
 Descarga solo lo que tengas derecho a usar. Clona solo tu propia voz, o una
 para la que tengas permiso explícito. No pongas cifras, promesas ni
-afirmaciones que nadie verificó.
+afirmaciones que nadie verificó — si el video lleva el nombre de una empresa,
+lee [`references/corporate.md`](skills/vertical-video/references/corporate.md).
 
 ## Licencia
 
 MIT. Ver [LICENSE](LICENSE).
+
+[English](README.md)

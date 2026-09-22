@@ -3,14 +3,19 @@
 Make TikToks, Reels and Shorts in code — narration that doesn't sound like a
 robot, word-by-word captions, and a real 1080×1920 render.
 
-Built for AI coding agents (Claude Code, Cursor, and anything else that reads
-skills), but every script runs on its own from a terminal.
-
 <p align="center">
   <img src="docs/preview-hook.png" width="240" alt="Hook scene">
   <img src="docs/preview-list.png" width="240" alt="List scene">
   <img src="docs/preview-stat.png" width="240" alt="Stat scene">
 </p>
+
+> **You don't need an AI subscription to use this.** The kit is Python and
+> Node. AI agents make it faster, but every script runs on its own from a
+> terminal, and there's a wizard that asks you five questions and hands back a
+> finished MP4. See **[Do you need to pay for an AI?](#do-you-need-to-pay-for-an-ai)**
+> or jump straight to [`docs/NO-AGENT.md`](docs/NO-AGENT.md).
+>
+> [Español](README.es.md) · [Sin agente, sin pagar](docs/SIN-AGENTE.md)
 
 ## Why
 
@@ -37,28 +42,54 @@ Three problems this solves properly:
 
 ## Install
 
-**As agent skills** — works with 75+ agents via [skills.sh](https://skills.sh):
+**One command**, on a machine with nothing on it:
+
+```bash
+git clone https://github.com/SDuarteCorredor/vertical-video-kit
+cd vertical-video-kit
+
+bash setup.sh                                                  # macOS, Linux
+powershell -ExecutionPolicy Bypass -File setup.ps1             # Windows
+```
+
+It checks for Node, FFmpeg and Python, asks before installing each one, and
+installs the Python packages. Run it twice and it skips what's already there.
+
+<details>
+<summary><b>Installing it as agent skills instead</b></summary>
+
+**75+ agents** via [skills.sh](https://skills.sh):
 
 ```bash
 npx skills add SDuarteCorredor/vertical-video-kit
 ```
 
-**As a Claude Code plugin:**
+**Claude Code** (paid plan required):
 
 ```
 /plugin marketplace add SDuarteCorredor/vertical-video-kit
 /plugin install vertical-video-kit
 ```
 
-**Or just clone it** and run the scripts yourself:
+**Codex CLI, Cursor, opencode, Copilot, Windsurf** read the
+[`AGENTS.md`](AGENTS.md) at the repo root — clone it and they pick it up.
 
-```bash
-git clone https://github.com/SDuarteCorredor/vertical-video-kit
-cd vertical-video-kit
-python skills/vertical-video/scripts/doctor.py --install
+**Gemini CLI** needs to be pointed at it. Create `.gemini/settings.json`:
+
+```json
+{ "context": { "fileName": ["AGENTS.md", "GEMINI.md"] } }
 ```
+</details>
 
 ## Quick start
+
+**The wizard** — five questions, no AI, no config:
+
+```bash
+python skills/vertical-video/scripts/wizard.py
+```
+
+**Or by hand:**
 
 ```bash
 python skills/vertical-video/scripts/new_project.py my-video
@@ -73,6 +104,31 @@ npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 ```
 
+**Or ask an AI to write the text for you** — [`docs/PROMPTS.md`](docs/PROMPTS.md)
+has prompts for coding agents and for any free chat, including a master prompt
+that returns both files ready to paste.
+
+## Do you need to pay for an AI?
+
+No. An agent edits the files and runs the commands for you, which is
+convenient and entirely optional.
+
+| Tool | Free? | What it needs |
+|---|---|---|
+| **No AI at all** | yes | nothing — the wizard, or the two files by hand |
+| **Any web chat** (ChatGPT, Claude, Gemini, DeepSeek…) | yes | a free account. Copy-paste from [`docs/PROMPTS.md`](docs/PROMPTS.md) |
+| **[Codex CLI](https://github.com/openai/codex)** | **yes, with limits** | a free ChatGPT account. `npm i -g @openai/codex` |
+| **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** | **yes** | a Google account, ~1,000 requests/day |
+| **GitHub Copilot** | limited free tier | a GitHub account, in VS Code |
+| **Claude Code** | **no** | a paid Claude plan (Pro, ~US$20/mo) or API credits |
+
+Codex CLI signs in with a **free** ChatGPT account — the free tier covers short
+local coding tasks, which is the size of the work here. Claude Code is the one
+that isn't free: the free Claude plan doesn't include it.
+
+Full walkthrough for a machine with none of this installed:
+[`docs/NO-AGENT.md`](docs/NO-AGENT.md) · [`docs/SIN-AGENTE.md`](docs/SIN-AGENTE.md).
+
 ## What's inside
 
 | | |
@@ -81,9 +137,13 @@ python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 | `skills/clip-cutter` | A long horizontal video → vertical clips with burned captions |
 | `skills/reference-research` | Take apart a short that works and reuse its structure |
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
+| `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `docs/NO-AGENT.md` | Install and run with no AI, on Windows, macOS or Linux |
+| `docs/PROMPTS.md` | Prompts for agents, and for any free chat |
 
 Each skill's `SKILL.md` is written to be read by a human too — the design
-rules, hook patterns and voice craft are in `skills/vertical-video/references/`.
+rules, hook patterns, voice craft and corporate-video constraints are in
+`skills/vertical-video/references/`.
 
 ## Voice engines
 
@@ -91,22 +151,25 @@ Set `"engine"` in `script.json`. Swappable, same interface.
 
 | Engine | Cost | Quality | Needs |
 |---|---|---|---|
+| `edge` | free | decent, audibly synthetic | `pip install edge-tts` — nothing else |
 | `voicestudio` | free | highest, clones voices | [VoiceStudio](https://github.com/debpalash/VoiceStudio) running locally |
-| `edge` | free | decent, audibly synthetic | `pip install edge-tts` |
 | `openai` | paid | very natural | `OPENAI_API_KEY` |
 | `elevenlabs` | paid | best commercial | `ELEVENLABS_API_KEY` |
 
-The default is local and free, and nothing leaves the machine.
+`edge` is the zero-install starting point and needs no account. `voicestudio`
+sounds better and is also free, but it's a desktop app you have to keep open —
+if it isn't running, `voice.py` falls back to `edge` and says so.
+
+Nothing leaves the machine on either free engine.
 
 ## Requirements
 
 - **Node 18+** and **FFmpeg** — required
 - **Python 3.9+** — for the scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voice fallback, captions,
-  downloads
+- `pip install edge-tts faster-whisper yt-dlp` — voice, captions, downloads
 
-`python skills/vertical-video/scripts/doctor.py --install` checks all of it and
-installs what it can.
+`setup.sh` / `setup.ps1` handle all of it.
+`python skills/vertical-video/scripts/doctor.py` reports what's missing.
 
 ## Built on
 
@@ -125,7 +188,9 @@ threshold. The rest is free.
 
 Download only what you have the right to use. Clone only your own voice, or
 one you have explicit permission to clone. Don't put claims, numbers or
-promises in a video that nobody verified.
+promises in a video that nobody verified — see
+[`references/corporate.md`](skills/vertical-video/references/corporate.md) if
+the video carries a company's name.
 
 ## License
 

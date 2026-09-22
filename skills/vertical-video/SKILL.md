@@ -33,6 +33,14 @@ python scripts/doctor.py --install
 Reports what is missing and installs the Python pieces. Node and FFmpeg it
 will not install silently — it prints the exact command for the platform.
 
+On a machine with nothing on it, `bash setup.sh` (macOS, Linux) or
+`setup.ps1` (Windows) installs everything in one command.
+
+If the person wants to drive it themselves rather than through you,
+`scripts/wizard.py` asks five questions and produces the finished MP4 with no
+agent involved. `docs/NO-AGENT.md` and `docs/PROMPTS.md` are the handover
+documents for that.
+
 ### 2. Decide what the video is before building anything
 
 Short-form is unforgiving about this. A 40-second video that starts badly is
@@ -72,6 +80,11 @@ redoing the design when the real text arrives.
 They are different texts on purpose. The screen can carry fragments; the voice
 needs whole sentences. Writing one and pasting it into the other is the most
 common reason a video sounds like a machine reading a slide.
+
+If the video carries a company's name, read `references/corporate.md` before
+writing — brand, approvals and what may not be claimed all change the job. A
+project scaffolded by `new_project.py` ships a `BRAND.md` to fill in once per
+company; if it has anything in it, read it first.
 
 **Never invent facts.** Percentages, prices, dates, claims about what a product
 does. A plausible number typed in to fill a line becomes a promise the person
@@ -169,7 +182,9 @@ shifts them. Take colors from a brand kit or a clean logo export.
 - `references/voice.md` — engines, and how to make TTS sound human
 - `references/captions.md` — caption styles and timing
 - `references/design.md` — safe areas, type, motion. **Read before laying out.**
-- `scripts/` — `doctor` · `new_project` · `diagnose`. All take `--help`.
+- `references/corporate.md` — brand, approvals, what may not be claimed
+- `scripts/` — `doctor` · `new_project` · `wizard` · `diagnose`. All take
+  `--help`.
 - Inside a project: `scripts/voice.py` · `captions.py` · `publish.py`
 
 Related skills: **clip-cutter** (long video into vertical clips),

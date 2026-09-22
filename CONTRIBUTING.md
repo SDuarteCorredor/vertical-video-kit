@@ -26,6 +26,15 @@ placeholder on purpose.
 
 **Comments explain why, not what.** The code says what it does.
 
+**It has to work with no AI at all.** Every capability reachable through a
+skill must also be reachable by running a script from a terminal. A feature
+that only exists inside an agent session is a feature most people cannot use —
+see `docs/NO-AGENT.md`.
+
+**`AGENTS.md` and the `SKILL.md` files say the same thing.** `AGENTS.md` is
+the entry point for Codex, Cursor, Gemini CLI and the rest; if a rule changes
+in one place, change it in both.
+
 ## Testing a change
 
 ```bash

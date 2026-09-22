@@ -51,6 +51,14 @@ def die(message: str) -> None:
     sys.exit(f"\n  {message}\n")
 
 
+def has_edge_tts() -> bool:
+    try:
+        import edge_tts  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
 def rate_to_speed(rate: str | float | None) -> float:
     """'-3%' -> 0.97. Engines that take a multiplier instead of a percentage."""
     if rate is None:
@@ -125,7 +133,32 @@ def synth_edge(text: str, cfg: dict) -> bytes:
                 chunks.extend(item["data"])
         return bytes(chunks)
 
-    return asyncio.run(run())
+    try:
+        audio = asyncio.run(run())
+    except Exception as err:
+        # edge-tts talks to a Microsoft endpoint over a websocket, so it is the
+        # one free engine that needs the internet — and the one that breaks on
+        # a locked-down office network. The raw traceback is forty lines of
+        # aiohttp and tells nobody what to do about it.
+        detail = str(err) or type(err).__name__
+        hint = ""
+        if "CERTIFICATE" in detail.upper() or "SSL" in detail.upper():
+            hint = ("\n  A certificate error usually means a corporate proxy is "
+                    "inspecting\n  traffic. On a network like that, use the "
+                    "'voicestudio' engine instead —\n  it runs on your own "
+                    "machine and never leaves it.")
+        elif "404" in detail or "invalid" in detail.lower():
+            hint = (f"\n  Check that '{cfg['voice']}' is a real voice:  "
+                    f"python scripts/voice.py --list-voices")
+        die(f"edge-tts could not reach the voice service.\n"
+            f"  {detail}\n{hint}")
+        raise
+
+    if not audio:
+        die(f"edge-tts returned no audio for '{cfg['voice']}'.\n"
+            f"  Usually the voice name is wrong. See:  "
+            f"python scripts/voice.py --list-voices")
+    return audio
 
 
 def synth_openai(text: str, cfg: dict) -> bytes:
@@ -163,6 +196,49 @@ ENGINES = {
     "openai": synth_openai,
     "elevenlabs": synth_elevenlabs,
 }
+
+# Where edge-tts lands when VoiceStudio is the configured engine but the app
+# isn't open. VoiceStudio voice names ("af_heart") mean nothing to edge-tts, so
+# falling back has to pick a voice too.
+EDGE_DEFAULTS = {
+    "es": "es-CO-SalomeNeural",
+    "en": "en-US-AriaNeural",
+    "pt": "pt-BR-FranciscaNeural",
+    "fr": "fr-FR-DeniseNeural",
+    "de": "de-DE-KatjaNeural",
+    "it": "it-IT-ElsaNeural",
+}
+
+EDGE_VOICE_PATTERN = re.compile(r"^[a-z]{2}-[A-Z]{2}-\w+$")
+
+
+def voicestudio_reachable() -> bool:
+    try:
+        urllib.request.urlopen(f"{VOICESTUDIO_URL}/v1/audio/voices", timeout=4).close()
+        return True
+    except Exception:
+        return False
+
+
+def fall_back_to_edge(cfg: dict, lang: str) -> None:
+    """Swap a dead VoiceStudio for edge-tts rather than stopping the run.
+
+    Someone who cloned the repo an hour ago has not installed a desktop app,
+    and dying here is the difference between a video and an error message.
+    Loud about it, because the two engines do not sound the same.
+    """
+    cfg["engine"] = "edge"
+    if not EDGE_VOICE_PATTERN.match(cfg.get("voice") or ""):
+        cfg["voice"] = EDGE_DEFAULTS.get(lang, EDGE_DEFAULTS["en"])
+    cfg["model"] = None
+    print(f"""
+  VoiceStudio is not answering at {VOICESTUDIO_URL}, so this is using
+  edge-tts with {cfg['voice']} instead. It works, it just sounds more
+  synthetic.
+
+  To keep it: set "engine": "edge" in script.json.
+  For the better voice: open the VoiceStudio app and run this again.
+""")
 
 
 # --------------------------------------------------------------------------- #
@@ -272,6 +348,13 @@ def main() -> None:
         return
 
     lang = guess_language(cfg["voice"], script.get("lang"))
+
+    # An explicit --engine is a decision; the default in script.json is not.
+    if cfg["engine"] == "voicestudio" and not args.engine and not args.only_measure:
+        if not voicestudio_reachable() and has_edge_tts():
+            fall_back_to_edge(cfg, lang)
+            lang = guess_language(cfg["voice"], script.get("lang"))
+
     prepare = (lambda t: t) if args.raw else (lambda t: naturalize(t, lang))
 
     if args.sample:

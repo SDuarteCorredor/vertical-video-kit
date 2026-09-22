@@ -1,6 +1,8 @@
 node_modules/
 out/
 output/
+upload/
+preview/
 dist/
 .remotion/
 
@@ -14,6 +16,7 @@ public/media/
 *.wav
 *.m4a
 *.webm
+sample.mp3
 !docs/**/*.mp4
 
 # Python

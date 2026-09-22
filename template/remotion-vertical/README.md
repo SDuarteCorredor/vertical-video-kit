@@ -26,6 +26,11 @@ the platform safe areas. Rebranding is that one file.
 
 `src/timings.json` and `src/captions.json` are generated. Don't edit them.
 
+`BRAND.md` is a brief to fill in once per company — who you are, how you sound,
+which numbers you are allowed to state. Paste it into any AI chat before asking
+for a script and what comes back sounds like you instead of like a press
+release. Optional, and worth ten minutes.
+
 ## Checking your work
 
 Rendering the whole video to look at one scene wastes minutes. Render a single
