@@ -47,13 +47,29 @@ Three problems this solves properly:
 ```bash
 git clone https://github.com/SDuarteCorredor/vertical-video-kit
 cd vertical-video-kit
-
-bash setup.sh                                                  # macOS, Linux
-powershell -ExecutionPolicy Bypass -File setup.ps1             # Windows
+python install.py
 ```
 
-It checks for Node, FFmpeg and Python, asks before installing each one, and
-installs the Python packages. Run it twice and it skips what's already there.
+That installs Node, FFmpeg and the Python packages, creates your first
+project, and **opens the Remotion studio in your browser** — the live preview,
+where you watch the video change as you edit it. Run it twice and it skips
+whatever is already there.
+
+<p align="center">
+  <code>python install.py</code> → dependencies → a project → the studio open at
+  <code>localhost:3000</code>
+</p>
+
+If `python` isn't found, try `python3` (macOS, Linux) or `py` (Windows). If
+Python isn't installed at all, `bash setup.sh` / `powershell -ExecutionPolicy
+Bypass -File setup.ps1` bootstraps it first.
+
+To open the studio again later:
+
+```bash
+python skills/vertical-video/scripts/studio.py my-video
+# or, inside the project:  npm run dev
+```
 
 <details>
 <summary><b>Installing it as agent skills instead</b></summary>
@@ -72,7 +88,9 @@ npx skills add SDuarteCorredor/vertical-video-kit
 ```
 
 **Codex CLI, Cursor, opencode, Copilot, Windsurf** read the
-[`AGENTS.md`](AGENTS.md) at the repo root — clone it and they pick it up.
+[`AGENTS.md`](AGENTS.md) at the repo root. Point one at this repository's URL
+and say "install this" — `AGENTS.md` opens with the install command and tells
+it to leave you looking at the studio.
 
 **Gemini CLI** needs to be pointed at it. Create `.gemini/settings.json`:
 
@@ -89,20 +107,23 @@ npx skills add SDuarteCorredor/vertical-video-kit
 python skills/vertical-video/scripts/wizard.py
 ```
 
-**Or by hand:**
+**Or by hand**, if `install.py` already made you a project:
 
 ```bash
-python skills/vertical-video/scripts/new_project.py my-video
 cd my-video
 
 # write script.json (what is said) and src/content.ts (what is seen)
 
 python scripts/voice.py        # narration + scene timings
 python scripts/captions.py     # word-by-word captions
-npm run dev                    # live preview
+npm run dev                    # the studio, live preview
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 ```
+
+The studio reloads on every save, so leave it open while you write. It works
+on a brand-new project too — scenes hold 3 seconds each until `voice.py` has
+measured the real narration.
 
 **Or ask an AI to write the text for you** — [`docs/PROMPTS.md`](docs/PROMPTS.md)
 has prompts for coding agents and for any free chat, including a master prompt
@@ -138,6 +159,7 @@ Full walkthrough for a machine with none of this installed:
 | `skills/reference-research` | Take apart a short that works and reuse its structure |
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
 | `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `install.py` | The one install command: dependencies, a project, the studio open |
 | `docs/NO-AGENT.md` | Install and run with no AI, on Windows, macOS or Linux |
 | `docs/PROMPTS.md` | Prompts for agents, and for any free chat |
 
@@ -168,7 +190,7 @@ Nothing leaves the machine on either free engine.
 - **Python 3.9+** — for the scripts
 - `pip install edge-tts faster-whisper yt-dlp` — voice, captions, downloads
 
-`setup.sh` / `setup.ps1` handle all of it.
+`python install.py` handles all of it.
 `python skills/vertical-video/scripts/doctor.py` reports what's missing.
 
 ## Built on

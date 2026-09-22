@@ -37,21 +37,43 @@ git clone https://github.com/SDuarteCorredor/vertical-video-kit
 cd vertical-video-kit
 ```
 
-**En Windows** (PowerShell):
-
-```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
-```
-
-**En macOS o Linux:**
+Y después, el único comando que importa:
 
 ```bash
-bash setup.sh
+python install.py
 ```
 
-El script revisa qué falta, te pregunta antes de instalar cada cosa, y al final
-imprime un reporte. Si instala Node o FFmpeg en Windows, **cierra la terminal y
-abre una nueva** antes de seguir — así es como Windows se entera de que existen.
+Instala Node, FFmpeg y los paquetes de Python, te crea el primer proyecto y
+**abre el visualizador de Remotion en el navegador**. Ahí ves el video, y se
+actualiza solo cada vez que guardas un archivo.
+
+Si `python` no se reconoce, prueba `python3` (macOS, Linux) o `py` (Windows).
+
+**Si Python todavía no está instalado**, arranca con el script de arranque, que
+sí lo instala:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup.ps1     # Windows
+```
+
+```bash
+bash setup.sh                                          # macOS, Linux
+```
+
+Si instala Node o FFmpeg en Windows, **cierra la terminal y abre una nueva**
+antes de seguir — así es como Windows se entera de que existen. Después,
+`python install.py`.
+
+### Volver a abrir el visualizador
+
+Se cierra cuando apagas el computador, o cuando matas el proceso. Para
+abrirlo otra vez:
+
+```bash
+python skills/vertical-video/scripts/studio.py mi-video
+```
+
+O, parado dentro de la carpeta del proyecto, `npm run dev`.
 
 > ¿No tienes `git`? Entra a la página del repositorio en GitHub, botón verde
 > **Code → Download ZIP**, y descomprímelo. Es exactamente lo mismo.
@@ -116,7 +138,7 @@ python skills/vertical-video/scripts/doctor.py
 
 ## 2. Hacer el video
 
-Hay tres caminos. Todos llegan al mismo MP4.
+Hay cuatro caminos. Todos llegan al mismo MP4.
 
 ### Camino A — el asistente (recomendado si nunca has usado una terminal)
 
@@ -133,8 +155,7 @@ No participa ninguna IA. Tú escribes las frases.
 ### Camino B — a mano, editando dos archivos
 
 ```bash
-python skills/vertical-video/scripts/new_project.py mi-video
-cd mi-video
+cd mi-video     # el que te creó install.py
 ```
 
 Ahora abre la carpeta `mi-video` en cualquier editor de texto — el Bloc de
@@ -196,10 +217,38 @@ python scripts/publish.py      # upload/video.mp4, ya codificado para subir
 Cambiaste una frase? Vuelve a correr `voice.py` y `captions.py`. La escena se
 reajusta sola. Eso es todo lo que cuesta una corrección aquí.
 
-### Camino C — que una IA gratis te escriba los textos
+### Camino C — pegarle el link a Codex (o a cualquier agente)
 
-Abre [`PROMPTS.es.md`](PROMPTS.es.md), copia el prompt del guion, pégalo en
-**cualquier** chat gratuito — ChatGPT, Claude, Gemini, Copilot, DeepSeek, el
+Abres Codex CLI y le pegas esto:
+
+```
+https://github.com/SDuarteCorredor/vertical-video-kit
+
+Clona este repositorio e instálalo.
+```
+
+El repo trae un `AGENTS.md` en la raíz — el estándar que Codex, Cursor,
+opencode, Copilot y Windsurf leen solos — y ese archivo **arranca** con el
+comando de instalación y con la instrucción de dejarte el visualizador abierto.
+No tienes que explicarle nada más.
+
+Cuando termine debería decirte una dirección como `http://localhost:3000`. Esa
+es la vista previa: si el navegador no se abrió solo, pega esa dirección ahí.
+
+Después ya le puedes pedir el video en español normal:
+
+```
+Hazme un video vertical de 40 segundos sobre NUESTRO PROCESO DE ONBOARDING,
+para gerentes de operaciones, en español de Colombia, voz de mujer.
+Propóneme tres ganchos antes de construir nada.
+```
+
+Hay más ejemplos en [`PROMPTS.es.md`](PROMPTS.es.md).
+
+### Camino D — que una IA gratis te escriba los textos
+
+Si no quieres instalar ningún agente: abre [`PROMPTS.es.md`](PROMPTS.es.md),
+copia el prompt del guion, pégalo en **cualquier** chat gratuito — ChatGPT, Claude, Gemini, Copilot, DeepSeek, el
 que sea — contesta lo que te pregunte, y te devuelve el `script.json` y el
 `content.ts` listos. Los pegas en los archivos y sigues con el Camino B.
 
@@ -281,6 +330,9 @@ Y con Claude Code, si alguien sí lo tiene pago:
 | `externally-managed-environment` | Usa un entorno virtual: `python3 -m venv .venv && source .venv/bin/activate` |
 | El texto queda tapado por TikTok | Pon `SHOW_SAFE_AREAS = true` en `src/theme.ts` y mira dónde cae. Ver [`design.md`](../skills/vertical-video/references/design.md) |
 | El render se demora muchísimo | Es normal la primera vez: Remotion baja un Chromium. Después es más rápido |
+| El visualizador no abre solo | Pega la dirección que imprimió (`http://localhost:3000`) en el navegador a mano |
+| `localhost:3000` no responde | Mira `studio.log` dentro de la carpeta del proyecto: ahí queda el error |
+| El puerto 3000 está ocupado | Se pasa solo al 3001, 3002… Fíjate en la dirección que imprimió |
 
 Para revisar un video que ya existe y entender qué está mal:
 

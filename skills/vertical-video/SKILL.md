@@ -33,8 +33,10 @@ python scripts/doctor.py --install
 Reports what is missing and installs the Python pieces. Node and FFmpeg it
 will not install silently — it prints the exact command for the platform.
 
-On a machine with nothing on it, `bash setup.sh` (macOS, Linux) or
-`setup.ps1` (Windows) installs everything in one command.
+On a machine with nothing on it, `python install.py --yes` from the kit root
+does the whole setup in one command — dependencies, a project, and the
+Remotion studio open in the browser. (`setup.sh` / `setup.ps1` bootstrap
+Python itself first, if it is missing.)
 
 If the person wants to drive it themselves rather than through you,
 `scripts/wizard.py` asks five questions and produces the finished MP4 with no
@@ -127,6 +129,18 @@ of them can carry the idea.
 professional or homemade. **Read it before laying anything out** — especially
 the safe areas, which are where most of these videos go wrong.
 
+**Leave the studio open while you work.** It reloads on every save, so the
+person watches the video change as you edit instead of waiting for a render:
+
+```bash
+python skills/vertical-video/scripts/studio.py my-video   # detached, opens a browser
+```
+
+It works on a brand-new project, before any audio exists — scenes hold 3
+seconds each until `voice.py` has measured the real narration. Inside a
+project, `npm run dev` does the same in the foreground; never run that as your
+own command, it does not return.
+
 ### 8. Check with single frames, not full renders
 
 ```bash
@@ -183,8 +197,9 @@ shifts them. Take colors from a brand kit or a clean logo export.
 - `references/captions.md` — caption styles and timing
 - `references/design.md` — safe areas, type, motion. **Read before laying out.**
 - `references/corporate.md` — brand, approvals, what may not be claimed
-- `scripts/` — `doctor` · `new_project` · `wizard` · `diagnose`. All take
-  `--help`.
+- `scripts/` — `doctor` · `new_project` · `wizard` · `studio` · `diagnose`.
+  All take `--help`.
+- `install.py` at the kit root — the one-command setup
 - Inside a project: `scripts/voice.py` · `captions.py` · `publish.py`
 
 Related skills: **clip-cutter** (long video into vertical clips),

@@ -19,6 +19,11 @@ public/media/
 sample.mp3
 !docs/**/*.mp4
 
+# Projects created by install.py live inside the clone. They are your work,
+# not part of the kit — rename the folder if you want to track one.
+/my-video/
+studio.log
+
 # Python
 __pycache__/
 *.pyc

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "remotion studio src/index.ts",
+    "studio": "remotion studio src/index.ts",
     "check": "tsc --noEmit",
     "still": "remotion still src/index.ts Short preview/frame.png",
     "render": "remotion render src/index.ts Short output/video.mp4 --codec=h264 --crf=17"

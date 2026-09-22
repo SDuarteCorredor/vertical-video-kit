@@ -26,6 +26,7 @@ except Exception:
     pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 
 # Curated instead of complete: `python scripts/voice.py --list-voices` prints
 # the full edge-tts catalogue, which is hundreds of rows and helps nobody
@@ -201,6 +202,8 @@ def main() -> None:
     parser.add_argument("--lang", help="skip the voice question (es, en)")
     parser.add_argument("--render", action="store_true",
                         help="render without asking at the end")
+    parser.add_argument("--no-studio", action="store_true",
+                        help="don't open the live preview at the end")
     args = parser.parse_args()
 
     print("""
@@ -253,12 +256,13 @@ def main() -> None:
   The on-screen text is a rough cut of your narration — good enough to see the
   layout, not good enough to publish. Open src/content.ts and rewrite it: the
   screen carries fragments, the voice carries sentences.
-
-  Preview it live (opens in your browser, updates as you edit):
-
-    cd {name}
-    npm run dev
 """)
+
+    if not args.no_studio:
+        rule("Opening the preview")
+        from studio import open_studio
+        if not open_studio(target):
+            print(f"\n  Start it yourself with:  cd {name} && npm run dev\n")
 
     npm = shutil.which("npm")
     if npm and (args.render or yes("  Render the video now? (a few minutes)")):

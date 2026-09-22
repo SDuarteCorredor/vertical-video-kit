@@ -36,21 +36,42 @@ git clone https://github.com/SDuarteCorredor/vertical-video-kit
 cd vertical-video-kit
 ```
 
-**Windows** (PowerShell):
-
-```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
-```
-
-**macOS or Linux:**
+Then the only command that matters:
 
 ```bash
-bash setup.sh
+python install.py
 ```
 
-It checks what's missing, asks before installing anything, and prints a report
-at the end. If it installs Node or FFmpeg on Windows, **close the terminal and
-open a new one** before continuing — that's how Windows notices they exist.
+It installs Node, FFmpeg and the Python packages, creates your first project,
+and **opens the Remotion studio in your browser**. That's the live preview —
+it updates itself every time you save a file.
+
+If `python` isn't recognised, try `python3` (macOS, Linux) or `py` (Windows).
+
+**If Python isn't installed yet**, start with the bootstrap script, which
+installs it:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup.ps1     # Windows
+```
+
+```bash
+bash setup.sh                                          # macOS, Linux
+```
+
+If it installs Node or FFmpeg on Windows, **close the terminal and open a new
+one** before continuing — that's how Windows notices they exist. Then
+`python install.py`.
+
+### Opening the studio again
+
+It stops when you shut the machine down, or kill the process. To bring it back:
+
+```bash
+python skills/vertical-video/scripts/studio.py my-video
+```
+
+Or `npm run dev` from inside the project folder.
 
 > No `git`? On the repository page on GitHub: green **Code → Download ZIP**,
 > then unzip. Same thing.
@@ -115,7 +136,7 @@ python skills/vertical-video/scripts/doctor.py
 
 ## 2. Making the video
 
-Three routes. All of them end at the same MP4.
+Four routes. All of them end at the same MP4.
 
 ### Route A — the wizard (start here if a terminal is unfamiliar)
 
@@ -132,8 +153,7 @@ No AI is involved. You write the lines.
 ### Route B — by hand, editing two files
 
 ```bash
-python skills/vertical-video/scripts/new_project.py my-video
-cd my-video
+cd my-video     # the one install.py made for you
 ```
 
 Open the `my-video` folder in any text editor — Notepad works,
@@ -194,10 +214,38 @@ python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 Changed a line? Re-run `voice.py` and `captions.py`. The scene re-times itself.
 That's what a correction costs here.
 
-### Route C — let a free AI write the text
+### Route C — paste the link into Codex (or any agent)
 
-Open [`PROMPTS.md`](PROMPTS.md), copy the script prompt, paste it into **any**
-free chat — ChatGPT, Claude, Gemini, Copilot, DeepSeek, whichever — answer what
+Open Codex CLI and paste this:
+
+```
+https://github.com/SDuarteCorredor/vertical-video-kit
+
+Clone this repository and install it.
+```
+
+The repo ships an `AGENTS.md` at its root — the standard Codex, Cursor,
+opencode, Copilot and Windsurf read on their own — and that file **opens** with
+the install command and the instruction to leave you looking at the studio. You
+don't have to explain anything else.
+
+When it finishes it should give you an address like `http://localhost:3000`.
+That's the preview; if the browser didn't open by itself, paste it there.
+
+Then ask for the video in plain language:
+
+```
+Make me a 40-second vertical video about OUR ONBOARDING PROCESS, for
+operations managers, US English, male voice.
+Give me three hook options before building anything.
+```
+
+More examples in [`PROMPTS.md`](PROMPTS.md).
+
+### Route D — let a free AI write the text
+
+If you'd rather not install an agent at all: open [`PROMPTS.md`](PROMPTS.md),
+copy the script prompt, paste it into **any** free chat — ChatGPT, Claude, Gemini, Copilot, DeepSeek, whichever — answer what
 it asks, and it hands back `script.json` and `content.ts` ready to paste. Then
 continue with Route B.
 
@@ -274,6 +322,9 @@ And for anyone who does have Claude Code:
 | `externally-managed-environment` | Use a virtualenv: `python3 -m venv .venv && source .venv/bin/activate` |
 | Text hidden behind TikTok's UI | Set `SHOW_SAFE_AREAS = true` in `src/theme.ts` and look. See [`design.md`](../skills/vertical-video/references/design.md) |
 | The render takes forever | Normal the first time — Remotion downloads a Chromium. It's faster after that |
+| The studio doesn't open by itself | Paste the address it printed (`http://localhost:3000`) into your browser |
+| `localhost:3000` doesn't answer | Check `studio.log` inside the project folder — the error is in there |
+| Port 3000 is taken | It moves to 3001, 3002… Use the address it printed |
 
 To measure a video that already exists and find out what's wrong with it:
 

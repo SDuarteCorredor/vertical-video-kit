@@ -47,14 +47,29 @@ Tres problemas que resuelve de verdad:
 ```bash
 git clone https://github.com/SDuarteCorredor/vertical-video-kit
 cd vertical-video-kit
-
-bash setup.sh                                                  # macOS, Linux
-powershell -ExecutionPolicy Bypass -File setup.ps1             # Windows
+python install.py
 ```
 
-Revisa si están Node, FFmpeg y Python, te pregunta antes de instalar cada uno,
-e instala los paquetes de Python. Si lo corres dos veces se salta lo que ya
-está.
+Eso instala Node, FFmpeg y los paquetes de Python, crea tu primer proyecto y
+**abre el visualizador de Remotion en el navegador** — la vista previa en vivo,
+donde ves el video cambiar mientras lo editas. Si lo corres dos veces se salta
+lo que ya está.
+
+<p align="center">
+  <code>python install.py</code> → dependencias → un proyecto → el visualizador
+  abierto en <code>localhost:3000</code>
+</p>
+
+Si `python` no existe, prueba `python3` (macOS, Linux) o `py` (Windows). Si
+Python no está instalado, `bash setup.sh` / `powershell -ExecutionPolicy Bypass
+-File setup.ps1` lo instala primero.
+
+Para volver a abrir el visualizador después:
+
+```bash
+python skills/vertical-video/scripts/studio.py mi-video
+# o, dentro del proyecto:  npm run dev
+```
 
 > ¿No tienes `git`? En la página del repositorio en GitHub: botón verde
 > **Code → Download ZIP**, y descomprímelo. Es lo mismo.
@@ -76,7 +91,9 @@ npx skills add SDuarteCorredor/vertical-video-kit
 ```
 
 **Codex CLI, Cursor, opencode, Copilot, Windsurf** leen el
-[`AGENTS.md`](AGENTS.md) de la raíz — clonas el repo y lo agarran solos.
+[`AGENTS.md`](AGENTS.md) de la raíz. Pégale a cualquiera de ellos el link de
+este repositorio y dile "instala esto": el `AGENTS.md` arranca con el comando
+de instalación y le dice que te deje mirando el visualizador.
 
 **Gemini CLI** hay que apuntarlo. Crea `.gemini/settings.json`:
 
@@ -93,20 +110,23 @@ npx skills add SDuarteCorredor/vertical-video-kit
 python skills/vertical-video/scripts/wizard.py
 ```
 
-**O a mano:**
+**O a mano**, si `install.py` ya te creó el proyecto:
 
 ```bash
-python skills/vertical-video/scripts/new_project.py mi-video
 cd mi-video
 
 # escribe script.json (lo que se dice) y src/content.ts (lo que se ve)
 
 python scripts/voice.py        # locución + duración de cada escena
 python scripts/captions.py     # subtítulos palabra por palabra
-npm run dev                    # vista previa en vivo
+npm run dev                    # el visualizador, vista previa en vivo
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, codificado para las plataformas
 ```
+
+El visualizador se recarga solo cada vez que guardas, así que déjalo abierto
+mientras escribes. Funciona también en un proyecto recién creado: cada escena
+dura 3 segundos hasta que `voice.py` mide la locución real.
 
 **O que una IA te escriba los textos** — [`docs/PROMPTS.es.md`](docs/PROMPTS.es.md)
 tiene prompts para agentes y para cualquier chat gratuito, incluido un prompt
@@ -143,6 +163,7 @@ Paso a paso para un computador donde no hay nada instalado:
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
 | `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `install.py` | El comando único: dependencias, un proyecto y el visualizador abierto |
 | `docs/SIN-AGENTE.md` | Instalar y correrlo sin IA, en Windows, macOS o Linux |
 | `docs/PROMPTS.es.md` | Prompts para agentes y para cualquier chat gratuito |
 
@@ -175,7 +196,7 @@ uno esperaría. `es-CO-SalomeNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
 - **Python 3.9+** — para los scripts
 - `pip install edge-tts faster-whisper yt-dlp` — voz, subtítulos, descargas
 
-`setup.sh` / `setup.ps1` se encargan de todo.
+`python install.py` se encarga de todo.
 `python skills/vertical-video/scripts/doctor.py` dice qué falta.
 
 ## Construido sobre
