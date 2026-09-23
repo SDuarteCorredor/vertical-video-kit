@@ -4,9 +4,9 @@ Haz TikToks, Reels y Shorts con código — locución que no suena a robot,
 subtítulos palabra por palabra y un render real de 1080×1920.
 
 <p align="center">
-  <img src="docs/preview-hook.png" width="240" alt="Escena de gancho">
-  <img src="docs/preview-list.png" width="240" alt="Escena de lista">
-  <img src="docs/preview-stat.png" width="240" alt="Escena de dato">
+  <img src="docs/preview-hook.jpg" width="240" alt="Escena de gancho">
+  <img src="docs/preview-list.jpg" width="240" alt="Escena de lista">
+  <img src="docs/preview-stat.jpg" width="240" alt="Escena de dato">
 </p>
 
 > **No necesitas pagar ninguna IA para usar esto.** El kit es Python y Node. Un
@@ -67,7 +67,7 @@ Python no está instalado, `bash setup.sh` / `powershell -ExecutionPolicy Bypass
 Para volver a abrir el visualizador después:
 
 ```bash
-python skills/vertical-video/scripts/studio.py mi-video
+python skills/vertical-video/scripts/studio.py my-video
 # o, dentro del proyecto:  npm run dev
 ```
 
@@ -123,8 +123,9 @@ python skills/vertical-video/scripts/wizard.py
 **O a mano**, si `install.py` ya te creó el proyecto:
 
 ```bash
-cd mi-video
+cd my-video
 
+python scripts/brand.py --compare   # elige un estilo: bold, clean, editorial, playful, corporate
 # escribe script.json (lo que se dice) y src/content.ts (lo que se ve)
 
 python scripts/voice.py        # locución + duración de cada escena
@@ -132,7 +133,15 @@ python scripts/captions.py     # subtítulos palabra por palabra
 npm run dev                    # el visualizador, vista previa en vivo
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, codificado para las plataformas
+python scripts/share.py        # output/video_light.mp4, liviano para WhatsApp o correo
 ```
+
+**Tu marca, no la de la plantilla.** `scripts/brand.py` define el estilo a
+partir de un preset más lo que la marca ya tenga: un archivo de design system
+(tokens JSON, variables CSS, Tailwind), el logo, los colores, cualquier fuente
+de Google o el archivo de la fuente propia. Un agente te pregunta todo esto
+antes de construir nada — ver
+[`references/style.md`](skills/vertical-video/references/style.md).
 
 El visualizador se recarga solo cada vez que guardas, así que déjalo abierto
 mientras escribes. Funciona también en un proyecto recién creado: cada escena
@@ -170,9 +179,11 @@ Paso a paso para un computador donde no hay nada instalado:
 |---|---|
 | `skills/vertical-video` | Guion → voz → subtítulos → render. La principal. |
 | `skills/clip-cutter` | Video horizontal largo → clips verticales con subtítulos quemados |
+| `skills/footage-edit` | Tomas de celular → un solo video: enderezado, estabilizado, zoom lento, color y fundidos |
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
 | `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `package.json` | Un solo Remotion compartido por todos los proyectos del kit (~340 MB una vez, no por video) |
 | `install.py` | El comando único: dependencias, un proyecto y el visualizador abierto |
 | `docs/SIN-AGENTE.md` | Instalar y correrlo sin IA, en Windows, macOS o Linux |
 | `docs/PROMPTS.es.md` | Prompts para agentes y para cualquier chat gratuito |
@@ -204,7 +215,7 @@ uno esperaría. `es-CO-SalomeNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
 
 - **Node 18+** y **FFmpeg** — obligatorios
 - **Python 3.9+** — para los scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voz, subtítulos, descargas
+- `pip install edge-tts faster-whisper yt-dlp pillow` — voz, subtítulos, descargas, hojas de contacto
 
 `python install.py` se encarga de todo.
 `python skills/vertical-video/scripts/doctor.py` dice qué falta.

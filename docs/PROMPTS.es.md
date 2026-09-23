@@ -62,7 +62,7 @@ Nuestra marca:
 - Nunca decimos: PALABRAS PROHIBIDAS
 
 Lee skills/vertical-video/references/corporate.md antes de escribir.
-Aplica los colores en src/theme.ts, no en los componentes.
+Aplica la marca con scripts/brand.py (escribe src/brand.json), no en los componentes.
 Cualquier cifra o afirmación sobre el producto, me la preguntas: no la
 inventes ni la redondees.
 ```

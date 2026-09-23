@@ -44,11 +44,32 @@ PIP_PACKAGES = {
     "edge_tts": ("edge-tts", "free fallback voice engine"),
     "faster_whisper": ("faster-whisper", "word-level captions"),
     "yt_dlp": ("yt-dlp", "downloading source and reference footage"),
+    "PIL": ("pillow", "contact sheets for choosing takes"),
 }
 
 
 def has_command(name: str) -> str | None:
     return shutil.which(name)
+
+
+def winget_ffmpeg() -> str | None:
+    """winget installs FFmpeg under the user profile and only a NEW terminal
+    picks up the PATH change, so it is often there without being found."""
+    root = os.path.expanduser("~/AppData/Local/Microsoft/WinGet/Packages")
+    if not os.path.isdir(root):
+        return None
+    for folder in sorted(os.listdir(root)):
+        if folder.startswith("Gyan.FFmpeg"):
+            for dirpath, _, files in os.walk(os.path.join(root, folder)):
+                if "ffmpeg.exe" in files:
+                    return os.path.join(dirpath, "ffmpeg.exe")
+    return None
+
+
+def has_vidstab() -> bool:
+    out = subprocess.run(["ffmpeg", "-hide_banner", "-filters"],
+                         capture_output=True, text=True).stdout
+    return "vidstabdetect" in out
 
 
 def has_module(name: str) -> bool:
@@ -96,8 +117,15 @@ def main() -> None:
         print(f"  {command:<16} {'ok' if path else 'MISSING'}")
         if not path:
             key = "node" if command in ("node", "npm") else "ffmpeg"
+            if key == "ffmpeg" and system == "Windows" and winget_ffmpeg():
+                problems.append(f"{command} is installed but this terminal cannot see it — "
+                                f"close it and open a new one ({winget_ffmpeg()})")
+                continue
             hint = INSTALL_HINTS[key].get(system, INSTALL_HINTS[key]["Linux"])
             problems.append(f"{command} — install with:  {hint}")
+
+    if has_command("ffmpeg") and not has_vidstab():
+        print(f"  {'vidstab':<16} {'-':<8} this FFmpeg cannot stabilize phone footage")
 
     node = has_command("node")
     if node:

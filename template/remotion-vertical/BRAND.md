@@ -72,16 +72,21 @@ written permission.
 
 | | |
 |---|---|
+| Feel | bold · clean · editorial · playful · corporate |
 | Primary color | `#` |
 | Secondary color | `#` |
-| Text on dark | `#` |
-| Font | |
-| Logo file | path, SVG or large clean PNG |
+| Background | light or dark, `#` |
+| Text | `#` |
+| Font | name on Google Fonts, or the font file |
+| Logo file | path, SVG or PNG with a transparent background |
+| Logo placement | corner · end · both · none |
+| Design system | path to tokens JSON / CSS variables, if there is one |
 
 Take colors from the brand kit or a clean logo export — **never** sampled from
 a screenshot or a video frame. Compression shifts them and the drift shows.
 
-These go in `src/theme.ts`, nowhere else.
+These go in `src/brand.json` — `python scripts/brand.py` writes it, and
+imports a design system file if you have one. Nowhere else.
 
 ## Where these videos go
 

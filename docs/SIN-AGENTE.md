@@ -25,8 +25,9 @@ Da igual qué IA uses o si no usas ninguna. El kit necesita tres cosas:
 | **FFmpeg** | medir el audio, pegar las pausas, codificar el MP4 | gratis |
 | **Python 3.9 o más** | los scripts de voz, subtítulos y publicación | gratis |
 
-Y tres paquetes de Python: `edge-tts` (la voz), `faster-whisper` (los
-subtítulos) y `yt-dlp` (descargas, solo si vas a cortar un video largo).
+Y cuatro paquetes de Python: `edge-tts` (la voz), `faster-whisper` (los
+subtítulos), `yt-dlp` (descargas, solo si vas a cortar un video largo) y
+`pillow` (hojas de contacto, solo si vas a editar tomas de celular).
 
 ### La forma fácil: un solo comando
 
@@ -70,7 +71,7 @@ Se cierra cuando apagas el computador, o cuando matas el proceso. Para
 abrirlo otra vez:
 
 ```bash
-python skills/vertical-video/scripts/studio.py mi-video
+python skills/vertical-video/scripts/studio.py my-video
 ```
 
 O, parado dentro de la carpeta del proyecto, `npm run dev`.
@@ -88,7 +89,7 @@ winget install OpenJS.NodeJS.LTS
 winget install Gyan.FFmpeg
 winget install Python.Python.3.12
 # cierra la terminal, abre una nueva, y:
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -100,7 +101,7 @@ pip install edge-tts faster-whisper yt-dlp
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install node ffmpeg python
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -114,7 +115,7 @@ sudo apt install -y nodejs npm ffmpeg python3 python3-pip python3-venv
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 nvm install 22
 
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 
 Si `pip3` responde *externally-managed-environment*, usa un entorno virtual —
@@ -122,7 +123,7 @@ Si `pip3` responde *externally-managed-environment*, usa un entorno virtual —
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 
 Ojo: hay que correr `source .venv/bin/activate` **en cada terminal nueva**.
@@ -155,10 +156,10 @@ No participa ninguna IA. Tú escribes las frases.
 ### Camino B — a mano, editando dos archivos
 
 ```bash
-cd mi-video     # el que te creó install.py
+cd my-video     # el que te creó install.py
 ```
 
-Ahora abre la carpeta `mi-video` en cualquier editor de texto — el Bloc de
+Ahora abre la carpeta `my-video` en cualquier editor de texto — el Bloc de
 notas sirve, [VS Code](https://code.visualstudio.com) es gratis y más cómodo.
 
 **Solo se tocan dos archivos.** El resto es la maquinaria.
@@ -207,11 +208,14 @@ En `src/content.ts` los `id` tienen que ser **los mismos** que en
 Después:
 
 ```bash
+python scripts/brand.py --compare   # el estilo: elige uno, luego --logo, --accent, --font
+```bash
 python scripts/voice.py        # genera la voz y mide cuánto dura cada escena
 python scripts/captions.py     # subtítulos palabra por palabra
 npm run dev                    # vista previa en vivo, se abre en el navegador
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, ya codificado para subir
+python scripts/share.py        # output/video_light.mp4, liviano para WhatsApp o correo
 ```
 
 Cambiaste una frase? Vuelve a correr `voice.py` y `captions.py`. La escena se
@@ -357,7 +361,7 @@ Y con Claude Code, si alguien sí lo tiene pago:
 Para revisar un video que ya existe y entender qué está mal:
 
 ```bash
-python skills/vertical-video/scripts/diagnose.py mi-video.mp4
+python skills/vertical-video/scripts/diagnose.py my-video.mp4
 ```
 
 ---

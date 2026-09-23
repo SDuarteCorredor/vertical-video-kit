@@ -36,7 +36,7 @@ PACKAGES = {
     "ffmpeg": ("Gyan.FFmpeg", "ffmpeg", "ffmpeg", "ffmpeg", "ffmpeg"),
 }
 
-PIP_PACKAGES = ["edge-tts", "faster-whisper", "yt-dlp"]
+PIP_PACKAGES = ["edge-tts", "faster-whisper", "yt-dlp", "pillow"]
 
 
 def say(message: str = "") -> None:
@@ -213,7 +213,7 @@ def ensure_python_packages() -> str:
         capture_output=True, text=True,
     )
     if attempt.returncode == 0:
-        say("edge-tts, faster-whisper, yt-dlp — ok")
+        say("edge-tts, faster-whisper, yt-dlp, pillow — ok")
         return sys.executable
 
     # Debian 12+, Ubuntu 24.04+ and Homebrew Python refuse to install into the
@@ -245,11 +245,8 @@ def create_project(python: str, name: str) -> str | None:
     target = os.path.join(HERE, name)
     if os.path.isdir(target):
         say(f"{name}/ already exists — using it.")
-        if not os.path.isdir(os.path.join(target, "node_modules")):
-            npm = which("npm")
-            if npm:
-                subprocess.run([npm, "install", "--no-audit", "--no-fund"],
-                               cwd=target, check=False)
+        from deps import ensure_dependencies
+        ensure_dependencies(target, say=say)
         return target
 
     result = subprocess.run(
@@ -314,6 +311,7 @@ def main() -> None:
 
   Then, from inside {args.name}/:
 
+    python scripts/brand.py      the look: style, logo, colors, fonts
     python scripts/voice.py      narration, and how long each scene runs
     python scripts/captions.py   word-by-word captions
     npm run render               output/video.mp4

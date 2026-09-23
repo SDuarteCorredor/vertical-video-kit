@@ -7,8 +7,9 @@
  */
 import React from "react";
 import type { Scene as SceneData } from "../content";
-import { color, font, scale, space } from "../theme";
-import { Body, Bullet, Hook, Kicker, Reveal, Stat, Title } from "../components/Pieces";
+import { LOGO, color, font, scale, space } from "../theme";
+import { Body, Bullet, Hook, Kicker, Reveal, Stat, Title, heading } from "../components/Pieces";
+import { BrandLogo } from "../components/Chrome";
 
 /**
  * A plain block, not an AbsoluteFill: an absolutely positioned child would
@@ -106,6 +107,7 @@ export const Scene: React.FC<{ scene: SceneData }> = ({ scene }) => {
           <Reveal>
             <div
               style={{
+                ...heading,
                 fontSize: scale.title,
                 fontWeight: font.bold,
                 lineHeight: 1.2,
@@ -126,6 +128,11 @@ export const Scene: React.FC<{ scene: SceneData }> = ({ scene }) => {
     case "cta":
       return (
         <Column justify="center" align="center">
+          {LOGO.placement === "end" || LOGO.placement === "both" ? (
+            <Reveal>
+              <BrandLogo height={LOGO.endHeight} />
+            </Reveal>
+          ) : null}
           <Reveal>
             <div style={{ textAlign: "center" }}>
               <Title>{scene.text}</Title>

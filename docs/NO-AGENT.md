@@ -24,8 +24,9 @@ This part is the same whichever AI you use, or none at all:
 | **FFmpeg** | measuring audio, building pauses, encoding the MP4 | free |
 | **Python 3.9+** | the voice, caption and publish scripts | free |
 
-Plus three Python packages: `edge-tts` (the voice), `faster-whisper` (the
-captions) and `yt-dlp` (downloads, only if you're cutting up a long video).
+Plus four Python packages: `edge-tts` (the voice), `faster-whisper` (the
+captions), `yt-dlp` (downloads, only if you're cutting up a long video) and
+`pillow` (contact sheets, only if you're editing phone footage).
 
 ### The easy way: one command
 
@@ -86,7 +87,7 @@ winget install OpenJS.NodeJS.LTS
 winget install Gyan.FFmpeg
 winget install Python.Python.3.12
 # close the terminal, open a new one, then:
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -98,7 +99,7 @@ pip install edge-tts faster-whisper yt-dlp
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install node ffmpeg python
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -112,7 +113,7 @@ sudo apt install -y nodejs npm ffmpeg python3 python3-pip python3-venv
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 nvm install 22
 
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 
 If `pip3` says *externally-managed-environment*, use a virtualenv — `setup.sh`
@@ -120,7 +121,7 @@ does this for you:
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 
 That `activate` line has to be run in every new terminal.
@@ -204,11 +205,13 @@ how narration, timings and captions find each other.
 Then:
 
 ```bash
+python scripts/brand.py --compare   # the look: pick a style, then --logo, --accent, --font
 python scripts/voice.py        # narration + how long each scene lasts
 python scripts/captions.py     # word-by-word captions
 npm run dev                    # live preview in your browser
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
+python scripts/share.py        # output/video_light.mp4, small enough for WhatsApp
 ```
 
 Changed a line? Re-run `voice.py` and `captions.py`. The scene re-times itself.

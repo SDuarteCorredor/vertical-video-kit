@@ -1,0 +1,113 @@
+{
+  "bold": {
+    "label": "Bold",
+    "looksLike": "dark, heavy type, high contrast — creator / TikTok native",
+    "color": {
+      "bg": "#0B0D12",
+      "text": "#FFFFFF",
+      "accent": "#7C5CFF",
+      "accent2": "#00E5A0",
+      "captionActive": "#FFE55C"
+    },
+    "font": {
+      "heading": "Inter",
+      "body": "Inter",
+      "headingWeight": 900,
+      "bodyWeight": 400,
+      "uppercaseHeadings": false
+    },
+    "radius": 32,
+    "caption": "stroke",
+    "motion": "snappy",
+    "background": "gradient",
+    "transition": "cut"
+  },
+  "clean": {
+    "label": "Clean",
+    "looksLike": "light, airy, lots of white space — product / SaaS / tips",
+    "color": {
+      "bg": "#F7F7F4",
+      "text": "#111318",
+      "accent": "#2563EB",
+      "accent2": "#0F766E"
+    },
+    "font": {
+      "heading": "DM Sans",
+      "body": "DM Sans",
+      "headingWeight": 700,
+      "bodyWeight": 400,
+      "uppercaseHeadings": false
+    },
+    "radius": 24,
+    "caption": "box",
+    "motion": "calm",
+    "background": "solid",
+    "transition": "cut"
+  },
+  "editorial": {
+    "label": "Editorial",
+    "looksLike": "serif headlines on warm paper — magazine, culture, thought leadership",
+    "color": {
+      "bg": "#F3EEE6",
+      "text": "#1C1A17",
+      "accent": "#B4532A",
+      "accent2": "#1C1A17"
+    },
+    "font": {
+      "heading": "Playfair Display",
+      "body": "Inter",
+      "headingWeight": 700,
+      "bodyWeight": 400,
+      "uppercaseHeadings": false
+    },
+    "radius": 4,
+    "caption": "stroke",
+    "motion": "calm",
+    "background": "solid",
+    "transition": "depth"
+  },
+  "playful": {
+    "label": "Playful",
+    "looksLike": "saturated color, round shapes, bouncy motion — consumer, food, events",
+    "color": {
+      "bg": "#FFD84D",
+      "text": "#141414",
+      "accent": "#FF4D8D",
+      "accent2": "#3B2BFF"
+    },
+    "font": {
+      "heading": "Poppins",
+      "body": "Poppins",
+      "headingWeight": 800,
+      "bodyWeight": 500,
+      "uppercaseHeadings": false
+    },
+    "radius": 44,
+    "caption": "pill",
+    "motion": "bouncy",
+    "background": "solid",
+    "transition": "cut"
+  },
+  "corporate": {
+    "label": "Corporate",
+    "looksLike": "white and navy, measured, logo on screen — institutional, HR, B2B",
+    "color": {
+      "bg": "#FFFFFF",
+      "text": "#0F1B2D",
+      "accent": "#0B5FFF",
+      "accent2": "#0B5FFF"
+    },
+    "font": {
+      "heading": "Montserrat",
+      "body": "Montserrat",
+      "headingWeight": 700,
+      "bodyWeight": 400,
+      "uppercaseHeadings": false
+    },
+    "radius": 16,
+    "caption": "box",
+    "motion": "calm",
+    "background": "solid",
+    "transition": "depth"
+  }
+}

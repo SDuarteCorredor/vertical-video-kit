@@ -4,9 +4,9 @@ Make TikToks, Reels and Shorts in code — narration that doesn't sound like a
 robot, word-by-word captions, and a real 1080×1920 render.
 
 <p align="center">
-  <img src="docs/preview-hook.png" width="240" alt="Hook scene">
-  <img src="docs/preview-list.png" width="240" alt="List scene">
-  <img src="docs/preview-stat.png" width="240" alt="Stat scene">
+  <img src="docs/preview-hook.jpg" width="240" alt="Hook scene">
+  <img src="docs/preview-list.jpg" width="240" alt="List scene">
+  <img src="docs/preview-stat.jpg" width="240" alt="Stat scene">
 </p>
 
 > **You don't need an AI subscription to use this.** The kit is Python and
@@ -122,6 +122,7 @@ python skills/vertical-video/scripts/wizard.py
 ```bash
 cd my-video
 
+python scripts/brand.py --compare   # pick a look: bold, clean, editorial, playful, corporate
 # write script.json (what is said) and src/content.ts (what is seen)
 
 python scripts/voice.py        # narration + scene timings
@@ -129,7 +130,14 @@ python scripts/captions.py     # word-by-word captions
 npm run dev                    # the studio, live preview
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
+python scripts/share.py        # output/video_light.mp4, small enough for WhatsApp
 ```
+
+**Your brand, not the template's.** `scripts/brand.py` sets the look from a
+style plus whatever the brand already has: a design system file (JSON tokens,
+CSS variables, Tailwind), a logo, colors, any Google font or the brand's own
+font file. An agent asks about all of this before it builds anything — see
+[`references/style.md`](skills/vertical-video/references/style.md).
 
 The studio reloads on every save, so leave it open while you write. It works
 on a brand-new project too — scenes hold 3 seconds each until `voice.py` has
@@ -166,10 +174,12 @@ Full walkthrough for a machine with none of this installed:
 |---|---|
 | `skills/vertical-video` | Script → voice → captions → render. The main one. |
 | `skills/clip-cutter` | A long horizontal video → vertical clips with burned captions |
+| `skills/footage-edit` | Phone takes → one video: straightened, stabilized, push-ins, color, crossfades |
 | `skills/reference-research` | Take apart a short that works and reuse its structure |
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
 | `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
 | `install.py` | The one install command: dependencies, a project, the studio open |
+| `package.json` | One Remotion install shared by every project in the kit (~340 MB once, not per video) |
 | `docs/NO-AGENT.md` | Install and run with no AI, on Windows, macOS or Linux |
 | `docs/PROMPTS.md` | Prompts for agents, and for any free chat |
 
@@ -198,7 +208,7 @@ Nothing leaves the machine on either free engine.
 
 - **Node 18+** and **FFmpeg** — required
 - **Python 3.9+** — for the scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voice, captions, downloads
+- `pip install edge-tts faster-whisper yt-dlp pillow` — voice, captions, downloads, contact sheets
 
 `python install.py` handles all of it.
 `python skills/vertical-video/scripts/doctor.py` reports what's missing.

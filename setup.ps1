@@ -102,13 +102,13 @@ if (Have 'node') {
 # --------------------------------------------------------------------------- #
 # python packages
 # --------------------------------------------------------------------------- #
-Say "Installing the Python packages (edge-tts, faster-whisper, yt-dlp)"
-& $py -m pip install --upgrade -q edge-tts faster-whisper yt-dlp
+Say "Installing the Python packages (edge-tts, faster-whisper, yt-dlp, pillow)"
+& $py -m pip install --upgrade -q edge-tts faster-whisper yt-dlp pillow
 if ($LASTEXITCODE -ne 0) {
     Say "Falling back to a virtual environment."
     & $py -m venv .venv
     & .\.venv\Scripts\python.exe -m pip install --upgrade -q pip
-    & .\.venv\Scripts\python.exe -m pip install -q edge-tts faster-whisper yt-dlp
+    & .\.venv\Scripts\python.exe -m pip install -q edge-tts faster-whisper yt-dlp pillow
     $py = '.\.venv\Scripts\python.exe'
     Say "Created .venv - activate it in every new terminal with:"
     Write-Host "    .\.venv\Scripts\Activate.ps1"
