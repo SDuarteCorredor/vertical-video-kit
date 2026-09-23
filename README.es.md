@@ -132,6 +132,7 @@ python scripts/captions.py     # subtítulos palabra por palabra
 npm run dev                    # el visualizador, vista previa en vivo
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, codificado para las plataformas
+python scripts/share.py        # output/video_light.mp4, liviano para WhatsApp o correo
 ```
 
 El visualizador se recarga solo cada vez que guardas, así que déjalo abierto
@@ -170,6 +171,7 @@ Paso a paso para un computador donde no hay nada instalado:
 |---|---|
 | `skills/vertical-video` | Guion → voz → subtítulos → render. La principal. |
 | `skills/clip-cutter` | Video horizontal largo → clips verticales con subtítulos quemados |
+| `skills/footage-edit` | Tomas de celular → un solo video: enderezado, estabilizado, zoom lento, color y fundidos |
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
 | `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
@@ -204,7 +206,7 @@ uno esperaría. `es-CO-SalomeNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
 
 - **Node 18+** y **FFmpeg** — obligatorios
 - **Python 3.9+** — para los scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voz, subtítulos, descargas
+- `pip install edge-tts faster-whisper yt-dlp pillow` — voz, subtítulos, descargas, hojas de contacto
 
 `python install.py` se encarga de todo.
 `python skills/vertical-video/scripts/doctor.py` dice qué falta.

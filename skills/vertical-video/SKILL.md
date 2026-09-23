@@ -157,6 +157,7 @@ bad line breaks, low contrast, anything past the margin.
 ```bash
 npm run render              # output/video.mp4
 python scripts/publish.py   # upload/video.mp4, encoded the way platforms want
+python scripts/share.py     # output/video_light.mp4, under 25 MB for email/WhatsApp
 ```
 
 ## How to hand it over
@@ -200,7 +201,8 @@ shifts them. Take colors from a brand kit or a clean logo export.
 - `scripts/` — `doctor` · `new_project` · `wizard` · `studio` · `diagnose`.
   All take `--help`.
 - `install.py` at the kit root — the one-command setup
-- Inside a project: `scripts/voice.py` · `captions.py` · `publish.py`
+- Inside a project: `scripts/voice.py` · `captions.py` · `publish.py` · `share.py`
 
 Related skills: **clip-cutter** (long video into vertical clips),
+**footage-edit** (phone takes into one video, no narration),
 **reference-research** (take apart a short that works).

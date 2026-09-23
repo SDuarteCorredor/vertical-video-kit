@@ -79,6 +79,7 @@ re-recording and re-cutting.
 |---|---|
 | Make a vertical video from scratch | `skills/vertical-video/SKILL.md` |
 | Cut a long video into shorts | `skills/clip-cutter/SKILL.md` |
+| Edit phone footage into one video | `skills/footage-edit/SKILL.md` |
 | Study a reference video | `skills/reference-research/SKILL.md` |
 | Make a corporate / brand video | `skills/vertical-video/references/corporate.md` |
 | Lay anything out on screen | `skills/vertical-video/references/design.md` |
@@ -99,6 +100,7 @@ python scripts/captions.py     # word-by-word -> src/captions.json
 npm run check                  # does it compile
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, platform-ready
+python scripts/share.py        # output/video_light.mp4, for email/WhatsApp
 ```
 
 The studio reloads by itself on every save, so leave it open while you work —

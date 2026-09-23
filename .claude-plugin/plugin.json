@@ -12,6 +12,7 @@
     "text-to-speech",
     "captions",
     "whisper",
-    "ffmpeg"
+    "ffmpeg",
+    "stabilization"
   ]
 }

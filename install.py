@@ -36,7 +36,7 @@ PACKAGES = {
     "ffmpeg": ("Gyan.FFmpeg", "ffmpeg", "ffmpeg", "ffmpeg", "ffmpeg"),
 }
 
-PIP_PACKAGES = ["edge-tts", "faster-whisper", "yt-dlp"]
+PIP_PACKAGES = ["edge-tts", "faster-whisper", "yt-dlp", "pillow"]
 
 
 def say(message: str = "") -> None:
@@ -213,7 +213,7 @@ def ensure_python_packages() -> str:
         capture_output=True, text=True,
     )
     if attempt.returncode == 0:
-        say("edge-tts, faster-whisper, yt-dlp — ok")
+        say("edge-tts, faster-whisper, yt-dlp, pillow — ok")
         return sys.executable
 
     # Debian 12+, Ubuntu 24.04+ and Homebrew Python refuse to install into the

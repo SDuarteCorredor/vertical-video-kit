@@ -115,8 +115,8 @@ fi
 # --------------------------------------------------------------------------- #
 # python packages
 # --------------------------------------------------------------------------- #
-say "Installing the Python packages (edge-tts, faster-whisper, yt-dlp)"
-if ! "$PY" -m pip install --upgrade -q edge-tts faster-whisper yt-dlp 2>/dev/null; then
+say "Installing the Python packages (edge-tts, faster-whisper, yt-dlp, pillow)"
+if ! "$PY" -m pip install --upgrade -q edge-tts faster-whisper yt-dlp pillow 2>/dev/null; then
   # Debian 12+, Ubuntu 24.04+ and Homebrew Python refuse to install into the
   # system interpreter. A virtualenv in the repo is the least surprising fix.
   say "This Python is externally managed — using a virtual environment instead."
@@ -125,7 +125,7 @@ if ! "$PY" -m pip install --upgrade -q edge-tts faster-whisper yt-dlp 2>/dev/nul
   . .venv/bin/activate
   PY="$(command -v python)"
   "$PY" -m pip install --upgrade -q pip
-  "$PY" -m pip install -q edge-tts faster-whisper yt-dlp
+  "$PY" -m pip install -q edge-tts faster-whisper yt-dlp pillow
   say "Created .venv — activate it in every new terminal with:"
   echo "    source .venv/bin/activate"
 fi

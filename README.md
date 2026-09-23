@@ -129,6 +129,7 @@ python scripts/captions.py     # word-by-word captions
 npm run dev                    # the studio, live preview
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
+python scripts/share.py        # output/video_light.mp4, small enough for WhatsApp
 ```
 
 The studio reloads on every save, so leave it open while you write. It works
@@ -166,6 +167,7 @@ Full walkthrough for a machine with none of this installed:
 |---|---|
 | `skills/vertical-video` | Script → voice → captions → render. The main one. |
 | `skills/clip-cutter` | A long horizontal video → vertical clips with burned captions |
+| `skills/footage-edit` | Phone takes → one video: straightened, stabilized, push-ins, color, crossfades |
 | `skills/reference-research` | Take apart a short that works and reuse its structure |
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
 | `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
@@ -198,7 +200,7 @@ Nothing leaves the machine on either free engine.
 
 - **Node 18+** and **FFmpeg** — required
 - **Python 3.9+** — for the scripts
-- `pip install edge-tts faster-whisper yt-dlp` — voice, captions, downloads
+- `pip install edge-tts faster-whisper yt-dlp pillow` — voice, captions, downloads, contact sheets
 
 `python install.py` handles all of it.
 `python skills/vertical-video/scripts/doctor.py` reports what's missing.

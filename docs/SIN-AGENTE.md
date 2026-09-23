@@ -25,8 +25,9 @@ Da igual qué IA uses o si no usas ninguna. El kit necesita tres cosas:
 | **FFmpeg** | medir el audio, pegar las pausas, codificar el MP4 | gratis |
 | **Python 3.9 o más** | los scripts de voz, subtítulos y publicación | gratis |
 
-Y tres paquetes de Python: `edge-tts` (la voz), `faster-whisper` (los
-subtítulos) y `yt-dlp` (descargas, solo si vas a cortar un video largo).
+Y cuatro paquetes de Python: `edge-tts` (la voz), `faster-whisper` (los
+subtítulos), `yt-dlp` (descargas, solo si vas a cortar un video largo) y
+`pillow` (hojas de contacto, solo si vas a editar tomas de celular).
 
 ### La forma fácil: un solo comando
 
@@ -88,7 +89,7 @@ winget install OpenJS.NodeJS.LTS
 winget install Gyan.FFmpeg
 winget install Python.Python.3.12
 # cierra la terminal, abre una nueva, y:
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -100,7 +101,7 @@ pip install edge-tts faster-whisper yt-dlp
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew install node ffmpeg python
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 </details>
 
@@ -114,7 +115,7 @@ sudo apt install -y nodejs npm ffmpeg python3 python3-pip python3-venv
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 nvm install 22
 
-pip3 install edge-tts faster-whisper yt-dlp
+pip3 install edge-tts faster-whisper yt-dlp pillow
 ```
 
 Si `pip3` responde *externally-managed-environment*, usa un entorno virtual —
@@ -122,7 +123,7 @@ Si `pip3` responde *externally-managed-environment*, usa un entorno virtual —
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install edge-tts faster-whisper yt-dlp
+pip install edge-tts faster-whisper yt-dlp pillow
 ```
 
 Ojo: hay que correr `source .venv/bin/activate` **en cada terminal nueva**.
@@ -212,6 +213,7 @@ python scripts/captions.py     # subtítulos palabra por palabra
 npm run dev                    # vista previa en vivo, se abre en el navegador
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, ya codificado para subir
+python scripts/share.py        # output/video_light.mp4, liviano para WhatsApp o correo
 ```
 
 Cambiaste una frase? Vuelve a correr `voice.py` y `captions.py`. La escena se
