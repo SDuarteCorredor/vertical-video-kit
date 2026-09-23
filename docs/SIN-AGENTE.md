@@ -71,7 +71,7 @@ Se cierra cuando apagas el computador, o cuando matas el proceso. Para
 abrirlo otra vez:
 
 ```bash
-python skills/vertical-video/scripts/studio.py mi-video
+python skills/vertical-video/scripts/studio.py my-video
 ```
 
 O, parado dentro de la carpeta del proyecto, `npm run dev`.
@@ -156,10 +156,10 @@ No participa ninguna IA. Tú escribes las frases.
 ### Camino B — a mano, editando dos archivos
 
 ```bash
-cd mi-video     # el que te creó install.py
+cd my-video     # el que te creó install.py
 ```
 
-Ahora abre la carpeta `mi-video` en cualquier editor de texto — el Bloc de
+Ahora abre la carpeta `my-video` en cualquier editor de texto — el Bloc de
 notas sirve, [VS Code](https://code.visualstudio.com) es gratis y más cómodo.
 
 **Solo se tocan dos archivos.** El resto es la maquinaria.
@@ -361,7 +361,7 @@ Y con Claude Code, si alguien sí lo tiene pago:
 Para revisar un video que ya existe y entender qué está mal:
 
 ```bash
-python skills/vertical-video/scripts/diagnose.py mi-video.mp4
+python skills/vertical-video/scripts/diagnose.py my-video.mp4
 ```
 
 ---

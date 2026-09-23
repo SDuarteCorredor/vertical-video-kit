@@ -67,7 +67,7 @@ Python no está instalado, `bash setup.sh` / `powershell -ExecutionPolicy Bypass
 Para volver a abrir el visualizador después:
 
 ```bash
-python skills/vertical-video/scripts/studio.py mi-video
+python skills/vertical-video/scripts/studio.py my-video
 # o, dentro del proyecto:  npm run dev
 ```
 
@@ -123,7 +123,7 @@ python skills/vertical-video/scripts/wizard.py
 **O a mano**, si `install.py` ya te creó el proyecto:
 
 ```bash
-cd mi-video
+cd my-video
 
 python scripts/brand.py --compare   # elige un estilo: bold, clean, editorial, playful, corporate
 # escribe script.json (lo que se dice) y src/content.ts (lo que se ve)
