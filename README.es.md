@@ -4,9 +4,9 @@ Haz TikToks, Reels y Shorts con código — locución que no suena a robot,
 subtítulos palabra por palabra y un render real de 1080×1920.
 
 <p align="center">
-  <img src="docs/preview-hook.png" width="240" alt="Escena de gancho">
-  <img src="docs/preview-list.png" width="240" alt="Escena de lista">
-  <img src="docs/preview-stat.png" width="240" alt="Escena de dato">
+  <img src="docs/preview-hook.jpg" width="240" alt="Escena de gancho">
+  <img src="docs/preview-list.jpg" width="240" alt="Escena de lista">
+  <img src="docs/preview-stat.jpg" width="240" alt="Escena de dato">
 </p>
 
 > **No necesitas pagar ninguna IA para usar esto.** El kit es Python y Node. Un

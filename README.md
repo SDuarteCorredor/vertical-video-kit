@@ -4,9 +4,9 @@ Make TikToks, Reels and Shorts in code — narration that doesn't sound like a
 robot, word-by-word captions, and a real 1080×1920 render.
 
 <p align="center">
-  <img src="docs/preview-hook.png" width="240" alt="Hook scene">
-  <img src="docs/preview-list.png" width="240" alt="List scene">
-  <img src="docs/preview-stat.png" width="240" alt="Stat scene">
+  <img src="docs/preview-hook.jpg" width="240" alt="Hook scene">
+  <img src="docs/preview-list.jpg" width="240" alt="List scene">
+  <img src="docs/preview-stat.jpg" width="240" alt="Stat scene">
 </p>
 
 > **You don't need an AI subscription to use this.** The kit is Python and
