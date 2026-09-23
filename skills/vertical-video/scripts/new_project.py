@@ -4,8 +4,9 @@
     python scripts/new_project.py my-video --engine edge --voice es-CO-SalomeNeural
     python scripts/new_project.py my-video --no-install
 
-Copies the Remotion template, writes your engine and voice choice into
-script.json, and runs npm install.
+Copies the Remotion template and writes your engine and voice choice into
+script.json. Inside the kit, every project shares one Remotion install at the
+kit root (see deps.py); anywhere else, the project gets its own.
 """
 from __future__ import annotations
 
@@ -64,6 +65,9 @@ def main() -> None:
                         choices=["voicestudio", "edge", "openai", "elevenlabs"])
     parser.add_argument("--voice", default=None)
     parser.add_argument("--lang", default=None, help="e.g. en, es")
+    parser.add_argument("--style", default=None,
+                        choices=["bold", "clean", "editorial", "playful", "corporate"],
+                        help="the look to start from; scripts/brand.py changes it later")
     parser.add_argument("--template", default=None)
     parser.add_argument("--no-install", action="store_true")
     args = parser.parse_args()
@@ -92,21 +96,28 @@ def main() -> None:
         with open(script_path, "w", encoding="utf-8") as handle:
             json.dump(script, handle, indent=2, ensure_ascii=False)
 
+    if args.style:
+        brand_path = os.path.join(target, "src", "brand.json")
+        with open(brand_path, encoding="utf-8") as handle:
+            brand = json.load(handle)
+        brand["style"] = args.style
+        with open(brand_path, "w", encoding="utf-8") as handle:
+            json.dump(brand, handle, indent=2, ensure_ascii=False)
+            handle.write("\n")
+
     print(f"\n  Created {target}")
 
     if not args.no_install:
-        print("  Installing dependencies (a minute or two)...")
-        npm = shutil.which("npm")
-        if not npm:
-            print("  npm not found — run 'npm install' yourself once Node is set up.")
-        else:
-            subprocess.run([npm, "install", "--no-audit", "--no-fund"],
-                           cwd=target, check=False)
+        from deps import ensure_dependencies
+        where = ensure_dependencies(target, say=lambda m: print(f"  {m}"))
+        if where and os.path.abspath(where) != target:
+            print(f"  Using the shared Remotion in {where}")
 
     print(f"""
   Next:
 
     cd {args.name}
+    python scripts/brand.py --help   (the look: style, logo, colors, fonts)
     (write src/content.ts and script.json first — text before design)
     python scripts/voice.py
     python scripts/captions.py

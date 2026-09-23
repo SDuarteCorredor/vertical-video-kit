@@ -38,8 +38,9 @@ in one place, change it in both.
 ## Testing a change
 
 ```bash
+npm ci                                    # once, at the kit root: shared by every project
+python skills/vertical-video/scripts/deps.py   # the root and template versions still match
 cd template/remotion-vertical
-npm install
 npm run check
 python scripts/voice.py --engine edge --voice en-US-AndrewNeural
 python scripts/captions.py

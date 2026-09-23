@@ -3,7 +3,7 @@
 Scaffolded by **vertical-video-kit**.
 
 ```bash
-npm install                    # once
+npm install                    # once — not needed inside the kit, which shares one install
 python scripts/voice.py        # narration + scene timings
 python scripts/captions.py     # word-by-word captions
 npm run dev                    # Remotion Studio, live preview
@@ -22,8 +22,10 @@ python scripts/share.py        # output/video_light.mp4, for email/WhatsApp
 They are separate on purpose. Screen text can be fragments; narration needs
 whole sentences. Scene ids must match between the two.
 
-`src/theme.ts` holds the entire visual identity — colors, type, spacing, and
-the platform safe areas. Rebranding is that one file.
+`src/brand.json` holds the look: a style to start from (bold, clean,
+editorial, playful, corporate) plus the brand's colors, fonts and logo.
+`python scripts/brand.py --help` fills it in — including from a design system
+file — and `--compare` shows this video in every style side by side.
 
 `src/timings.json` and `src/captions.json` are generated. Don't edit them.
 

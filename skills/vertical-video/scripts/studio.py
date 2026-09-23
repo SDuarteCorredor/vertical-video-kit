@@ -67,12 +67,8 @@ def open_studio(project: str, port: int | None = None,
         say(f"Once it is:  cd {os.path.basename(project)} && npm run dev")
         return False
 
-    if not os.path.isdir(os.path.join(project, "node_modules")):
-        npm = shutil.which("npm")
-        if npm:
-            say("Installing the project's dependencies first (a minute or two)...")
-            subprocess.run([npm, "install", "--no-audit", "--no-fund"],
-                           cwd=project, check=False)
+    from deps import ensure_dependencies
+    ensure_dependencies(project, say=say)
 
     index = os.path.join("src", "index.ts")
 

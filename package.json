@@ -1,0 +1,21 @@
+{
+  "name": "vertical-video-kit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared Remotion install for every project created inside the kit. Node resolves packages upward, so projects here need no node_modules of their own. Keep these versions identical to template/remotion-vertical/package.json.",
+  "vvkWorkspace": true,
+  "scripts": {
+    "check-versions": "python skills/vertical-video/scripts/deps.py"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.520",
+    "@remotion/google-fonts": "4.0.520",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.520"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.8",
+    "typescript": "5.9.3"
+  }
+}
