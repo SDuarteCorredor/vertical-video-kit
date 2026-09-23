@@ -9,6 +9,7 @@ python scripts/captions.py     # word-by-word captions
 npm run dev                    # Remotion Studio, live preview
 npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, platform-ready
+python scripts/share.py        # output/video_light.mp4, for email/WhatsApp
 ```
 
 ## The two files you edit
