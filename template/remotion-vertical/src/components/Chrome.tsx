@@ -5,13 +5,14 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Easing,
   Img,
   OffthreadVideo,
   interpolate,
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { captionBand, color, font, safe, space } from "../theme";
+import { TRANSITION, captionBand, color, font, safe, space } from "../theme";
 
 const isVideo = (file: string) => /\.(mp4|webm|mov|mkv)$/i.test(file);
 
@@ -61,22 +62,54 @@ const Background: React.FC<{ media?: string }> = ({ media }) => {
  * Cuts, not crossfades. Short-form is watched at arm's length on a phone —
  * a half-second dissolve reads as lag, not as polish. The only fade here is
  * a 4-frame edge that hides the hard seam between two backgrounds.
+ *
+ * TRANSITION = "depth" in theme.ts swaps that edge for a short change of
+ * focus: the outgoing scene recedes and blurs, the incoming one arrives from
+ * slightly too close. No edge travels across the screen, so it reads as the
+ * surface settling rather than a slide being pushed. It stays inside each
+ * scene's own frames — nothing overlaps, so narration and captions keep
+ * their timing.
  */
+const depthStyle = (frame: number, duration: number): React.CSSProperties => {
+  const IN = 9;
+  const OUT = 6;
+  const settle = Easing.bezier(0.33, 0, 0.1, 1);
+  const enter = interpolate(frame, [0, IN], [0, 1], {
+    easing: settle,
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const exit = interpolate(frame, [duration - OUT, duration], [0, 1], {
+    easing: Easing.bezier(0.5, 0, 1, 1),
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const blur = (1 - enter) * 7 + exit * 7;
+  return {
+    opacity: Math.min(interpolate(enter, [0, 0.55, 1], [0, 0.85, 1]), 1 - exit),
+    transform: `scale(${(1 + 0.055 * (1 - enter)) * (1 - 0.05 * exit)})`,
+    filter: blur > 0.2 ? `blur(${blur}px)` : undefined,
+  };
+};
+
 export const SceneShell: React.FC<{
   durationInFrames: number;
   media?: string;
   children: React.ReactNode;
 }> = ({ durationInFrames, media, children }) => {
   const frame = useCurrentFrame();
-  const opacity = interpolate(
-    frame,
-    [0, 4, durationInFrames - 4, durationInFrames],
-    [0, 1, 1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-  );
+  const cut = {
+    opacity: interpolate(
+      frame,
+      [0, 4, durationInFrames - 4, durationInFrames],
+      [0, 1, 1, 0],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    ),
+  };
+  const style = TRANSITION === "depth" ? depthStyle(frame, durationInFrames) : cut;
 
   return (
-    <AbsoluteFill style={{ opacity }}>
+    <AbsoluteFill style={style}>
       <Background media={media} />
       <AbsoluteFill
         style={{

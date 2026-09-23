@@ -87,3 +87,11 @@ export const captionBaseline = 1920 - safe.bottom - captionBand + 60;
 
 /** Turn on in Remotion Studio to see the platform-UI overlay. Never render with it on. */
 export const SHOW_SAFE_AREAS = false;
+
+/**
+ * How one scene hands over to the next.
+ * "cut"   — a 4-frame edge; the default, and right for most short-form.
+ * "depth" — a quick change of focus (recede + blur, arrive from close). Suits
+ *           corporate and product pieces, where hard cuts can feel abrupt.
+ */
+export const TRANSITION: "cut" | "depth" = "cut";
