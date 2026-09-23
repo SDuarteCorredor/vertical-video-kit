@@ -12,9 +12,21 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { TRANSITION, captionBand, color, font, safe, space } from "../theme";
+import {
+  BACKGROUND,
+  LOGO,
+  TRANSITION,
+  captionBand,
+  color,
+  font,
+  safe,
+  space,
+} from "../theme";
 
 const isVideo = (file: string) => /\.(mp4|webm|mov|mkv)$/i.test(file);
+
+const showCornerLogo =
+  LOGO.src !== null && (LOGO.placement === "corner" || LOGO.placement === "both");
 
 /**
  * Background media must be at least as long as the scene it sits behind.
@@ -26,7 +38,10 @@ const Background: React.FC<{ media?: string }> = ({ media }) => {
     return (
       <AbsoluteFill
         style={{
-          background: `radial-gradient(120% 70% at 50% 0%, ${color.surface} 0%, ${color.bg} 55%, ${color.bgDeep} 100%)`,
+          background:
+            BACKGROUND === "gradient"
+              ? `radial-gradient(120% 70% at 50% 0%, ${color.surface} 0%, ${color.bg} 55%, ${color.bgDeep} 100%)`
+              : color.bg,
         }}
       />
     );
@@ -51,7 +66,7 @@ const Background: React.FC<{ media?: string }> = ({ media }) => {
           third of the shot and nobody can tell you exactly when. */}
       <AbsoluteFill
         style={{
-          background: `linear-gradient(180deg, rgba(5,7,11,0.72) 0%, rgba(5,7,11,0.35) 35%, rgba(5,7,11,0.82) 100%)`,
+          background: `linear-gradient(180deg, ${color.scrimTop} 0%, ${color.scrimMid} 35%, ${color.scrimBottom} 100%)`,
         }}
       />
     </AbsoluteFill>
@@ -113,7 +128,7 @@ export const SceneShell: React.FC<{
       <Background media={media} />
       <AbsoluteFill
         style={{
-          paddingTop: safe.top,
+          paddingTop: safe.top + (showCornerLogo ? LOGO.cornerHeight + space.gap : 0),
           paddingBottom: safe.bottom + captionBand,
           paddingLeft: space.margin,
           paddingRight: space.margin,
@@ -126,6 +141,33 @@ export const SceneShell: React.FC<{
     </AbsoluteFill>
   );
 };
+
+/** The brand's logo file from public/, at a fixed height. */
+export const BrandLogo: React.FC<{ height: number }> = ({ height }) =>
+  LOGO.src ? (
+    <Img
+      src={staticFile(LOGO.src)}
+      style={{ height, width: "auto", objectFit: "contain" }}
+    />
+  ) : null;
+
+/**
+ * The logo in the top corner of every scene, just below the platform's own
+ * top UI. Scenes are pushed down by its height, so it never covers a title.
+ */
+export const CornerLogo: React.FC = () =>
+  showCornerLogo ? (
+    <AbsoluteFill
+      style={{
+        paddingTop: safe.top,
+        paddingLeft: space.margin,
+        alignItems: "flex-start",
+        pointerEvents: "none",
+      }}
+    >
+      <BrandLogo height={LOGO.cornerHeight} />
+    </AbsoluteFill>
+  ) : null;
 
 /** Sits above every scene so the viewer can see how much is left. */
 export const ProgressBar: React.FC<{ totalFrames: number }> = ({

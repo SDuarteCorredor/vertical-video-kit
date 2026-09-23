@@ -1,0 +1,8 @@
+{
+  "_help": "The look of the video. 'style' is the starting point: bold, clean, editorial, playful or corporate. Everything else is optional and overrides the style — leave it out to keep the style's choice. scripts/brand.py fills this in for you (and imports a design system, a logo, colors).",
+  "style": "bold",
+  "colors": {},
+  "fonts": {},
+  "logo": null,
+  "logoPlacement": "corner"
+}

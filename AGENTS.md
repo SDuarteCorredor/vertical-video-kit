@@ -81,6 +81,7 @@ re-recording and re-cutting.
 | Cut a long video into shorts | `skills/clip-cutter/SKILL.md` |
 | Edit phone footage into one video | `skills/footage-edit/SKILL.md` |
 | Study a reference video | `skills/reference-research/SKILL.md` |
+| Set the look: style, logo, colors, fonts, design system | `skills/vertical-video/references/style.md` |
 | Make a corporate / brand video | `skills/vertical-video/references/corporate.md` |
 | Lay anything out on screen | `skills/vertical-video/references/design.md` |
 | Write or generate narration | `skills/vertical-video/references/voice.md` |
@@ -94,6 +95,7 @@ Those files are the real instructions. This one is the index.
 python install.py --yes        # once: dependencies, a project, the studio open
 
 cd my-video
+python scripts/brand.py --compare   # after asking about the brand: style, logo, colors
 # edit script.json (what is SAID) and src/content.ts (what is SEEN)
 python scripts/voice.py        # narration -> audio/ + src/timings.json
 python scripts/captions.py     # word-by-word -> src/captions.json
@@ -122,6 +124,12 @@ when you hand the video over, instead of burying it in a code comment.
 the only files content touches. If a text change requires editing a component,
 the change is going the wrong way.
 
+**Ask about the look before building.** A new project starts in the kit's
+placeholder style. Ask about brand guidelines or a design system, logo,
+colors, font and feel first, and apply them with `scripts/brand.py` — see
+`skills/vertical-video/references/style.md`. Never ship the default look by
+accident, and never invent brand colors.
+
 **Audio drives timing.** Never hardcode a scene duration. `voice.py` measures
 the narration and writes `src/timings.json`; the components read it.
 
@@ -141,6 +149,12 @@ Look at one frame of **each scene type**, not just the first.
 **Don't commit generated media.** `audio/`, `output/`, `upload/`, `public/audio/`
 and `node_modules/` are gitignored on purpose. They regenerate.
 
+**One Remotion for every project.** Projects created inside the kit use the
+`node_modules` at the kit root — Node looks upward for packages. Don't run
+`npm install` inside a project there; `new_project.py` and `studio.py` install
+the shared one when it is missing. Upgrading Remotion means changing both
+`package.json` (root and template) together; `deps.py` checks they match.
+
 ## Who you are usually helping
 
 Often someone in marketing or communications, frequently non-technical. They do
@@ -157,8 +171,9 @@ If they write to you in Spanish, answer in Spanish. The repo ships
 ## Verifying a change to the kit itself
 
 ```bash
+npm ci                                    # once, at the kit root: shared by every project
+python skills/vertical-video/scripts/deps.py   # the root and template versions still match
 cd template/remotion-vertical
-npm install
 npm run check
 python scripts/voice.py --engine edge --voice en-US-AndrewNeural
 python scripts/captions.py

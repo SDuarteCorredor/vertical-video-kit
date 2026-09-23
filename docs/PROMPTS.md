@@ -64,7 +64,7 @@ Our brand:
 - We never say: BANNED WORDS
 
 Read skills/vertical-video/references/corporate.md before writing.
-Put the colors in src/theme.ts, not in the components.
+Set the brand with scripts/brand.py (it writes src/brand.json), not in the components.
 Any figure or claim about the product, ask me — don't invent it and don't
 round it.
 ```

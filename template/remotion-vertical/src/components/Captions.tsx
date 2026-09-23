@@ -10,7 +10,7 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import captionsFile from "../captions.json";
-import { captionBaseline, color, font, scale, space } from "../theme";
+import { CAPTIONS, captionBaseline, color, contrast, font, scale, space } from "../theme";
 
 type Word = { start: number; end: number; text: string };
 
@@ -52,6 +52,46 @@ const buildLines = (words: Word[]): Line[] => {
 
 const LINES = buildLines(WORDS);
 
+/**
+ * Three looks, picked by the style or brand.json "captions":
+ *   stroke — outlined words, the active one recolored. Survives any footage.
+ *   box    — the line sits on a solid block. Calm; reads on light styles.
+ *   pill   — the active word gets its own filled pill. Loud; creator style.
+ */
+const LINE_STYLE: Record<typeof CAPTIONS, React.CSSProperties> = {
+  // A stroke, not a drop shadow: captions have to survive landing on a
+  // white wall in the background footage.
+  stroke: { WebkitTextStroke: `10px ${color.captionStroke}`, paintOrder: "stroke fill" },
+  box: {
+    backgroundColor: color.text,
+    padding: "14px 28px",
+    borderRadius: Math.min(space.radius, 24),
+  },
+  pill: {},
+};
+
+/** On a box the words sit on the text color, so the highlight must read there. */
+const BOX_ACTIVE = [color.captionActive, color.accent, color.accent2].reduce(
+  (best, c) => (contrast(c, color.text) > contrast(best, color.text) * 1.4 ? c : best),
+);
+
+const wordStyle = (active: boolean): React.CSSProperties => {
+  if (CAPTIONS === "box") {
+    return { color: active ? BOX_ACTIVE : color.bg };
+  }
+  if (CAPTIONS === "pill") {
+    return {
+      color: active ? color.onAccent : color.text,
+      backgroundColor: active ? color.accent : "transparent",
+      padding: "4px 18px",
+      borderRadius: 999,
+      WebkitTextStroke: active ? undefined : `8px ${color.captionStroke}`,
+      paintOrder: "stroke fill",
+    };
+  }
+  return { color: active ? color.captionActive : color.text };
+};
+
 export const Captions: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -76,16 +116,14 @@ export const Captions: React.FC = () => {
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
-          gap: 18,
-          fontFamily: font.family,
+          alignItems: "center",
+          gap: CAPTIONS === "stroke" ? 18 : 12,
+          fontFamily: font.heading,
           fontSize: scale.caption,
           fontWeight: font.black,
           lineHeight: 1.15,
           textAlign: "center",
-          // A stroke, not a drop shadow: captions have to survive landing on a
-          // white wall in the background footage.
-          WebkitTextStroke: `10px ${color.bgDeep}`,
-          paintOrder: "stroke fill",
+          ...LINE_STYLE[CAPTIONS],
         }}
       >
         {line.words.map((w, i) => {
@@ -94,9 +132,9 @@ export const Captions: React.FC = () => {
             <span
               key={`${w.start}-${i}`}
               style={{
-                color: active ? color.captionActive : color.text,
-                transform: active ? "scale(1.08)" : "scale(1)",
                 display: "inline-block",
+                transform: active ? "scale(1.08)" : "scale(1)",
+                ...wordStyle(active),
               }}
             >
               {w.text}

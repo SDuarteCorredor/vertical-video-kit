@@ -7,20 +7,20 @@
  */
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { color, font, scale, space } from "../theme";
+import { MOTION, color, font, scale, space } from "../theme";
 
 /** Entrance animation. `delay` is in frames; stagger items by 4-6. */
 export const Reveal: React.FC<{
   delay?: number;
   shift?: number;
   children: React.ReactNode;
-}> = ({ delay = 0, shift = 48, children }) => {
+}> = ({ delay = 0, shift = MOTION.shift, children }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = spring({
     frame: frame - delay,
     fps,
-    config: { damping: 200, mass: 0.5 },
+    config: { damping: MOTION.damping, mass: MOTION.mass },
   });
   return (
     <div style={{ opacity: p, transform: `translateY(${(1 - p) * shift}px)` }}>
@@ -45,9 +45,16 @@ export const Kicker: React.FC<{ children: React.ReactNode }> = ({
   </div>
 );
 
+/** Shared by every headline, so a style's heading font and case apply everywhere. */
+export const heading: React.CSSProperties = {
+  fontFamily: font.heading,
+  textTransform: font.uppercaseHeadings ? "uppercase" : "none",
+};
+
 export const Hook: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div
     style={{
+      ...heading,
       fontSize: scale.hook,
       fontWeight: font.black,
       lineHeight: 1.05,
@@ -64,6 +71,7 @@ export const Title: React.FC<{ children: React.ReactNode }> = ({
 }) => (
   <div
     style={{
+      ...heading,
       fontSize: scale.title,
       fontWeight: font.black,
       lineHeight: 1.1,
@@ -108,9 +116,9 @@ export const Bullet: React.FC<{ index: number; children: React.ReactNode }> = ({
         flexShrink: 0,
         width: 76,
         height: 76,
-        borderRadius: 24,
+        borderRadius: Math.min(space.radius, 38),
         backgroundColor: color.accent,
-        color: color.text,
+        color: color.onAccent,
         fontSize: 42,
         fontWeight: font.black,
         display: "flex",
@@ -133,6 +141,7 @@ export const Stat: React.FC<{ value: string; label: string }> = ({
   <div style={{ textAlign: "center" }}>
     <div
       style={{
+        ...heading,
         fontSize: scale.stat,
         fontWeight: font.black,
         lineHeight: 1,

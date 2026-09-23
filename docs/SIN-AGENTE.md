@@ -208,6 +208,8 @@ En `src/content.ts` los `id` tienen que ser **los mismos** que en
 Después:
 
 ```bash
+python scripts/brand.py --compare   # el estilo: elige uno, luego --logo, --accent, --font
+```bash
 python scripts/voice.py        # genera la voz y mide cuánto dura cada escena
 python scripts/captions.py     # subtítulos palabra por palabra
 npm run dev                    # vista previa en vivo, se abre en el navegador

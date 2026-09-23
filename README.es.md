@@ -125,6 +125,7 @@ python skills/vertical-video/scripts/wizard.py
 ```bash
 cd mi-video
 
+python scripts/brand.py --compare   # elige un estilo: bold, clean, editorial, playful, corporate
 # escribe script.json (lo que se dice) y src/content.ts (lo que se ve)
 
 python scripts/voice.py        # locución + duración de cada escena
@@ -134,6 +135,13 @@ npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, codificado para las plataformas
 python scripts/share.py        # output/video_light.mp4, liviano para WhatsApp o correo
 ```
+
+**Tu marca, no la de la plantilla.** `scripts/brand.py` define el estilo a
+partir de un preset más lo que la marca ya tenga: un archivo de design system
+(tokens JSON, variables CSS, Tailwind), el logo, los colores, cualquier fuente
+de Google o el archivo de la fuente propia. Un agente te pregunta todo esto
+antes de construir nada — ver
+[`references/style.md`](skills/vertical-video/references/style.md).
 
 El visualizador se recarga solo cada vez que guardas, así que déjalo abierto
 mientras escribes. Funciona también en un proyecto recién creado: cada escena
@@ -175,6 +183,7 @@ Paso a paso para un computador donde no hay nada instalado:
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
 | `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
+| `package.json` | Un solo Remotion compartido por todos los proyectos del kit (~340 MB una vez, no por video) |
 | `install.py` | El comando único: dependencias, un proyecto y el visualizador abierto |
 | `docs/SIN-AGENTE.md` | Instalar y correrlo sin IA, en Windows, macOS o Linux |
 | `docs/PROMPTS.es.md` | Prompts para agentes y para cualquier chat gratuito |

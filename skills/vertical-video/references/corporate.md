@@ -85,17 +85,16 @@ reason to care who made it.
 
 ## Brand, in practice
 
-The entire visual identity is `src/theme.ts`. Rebranding is that one file —
-if a brand change requires touching a component, something is in the wrong
-place.
+The entire visual identity is `src/brand.json`, and `scripts/brand.py` writes
+it — from a design system, a logo, colors and fonts. If a brand change
+requires touching a component, something is in the wrong place. Start with
+the **corporate** style and override it; `references/style.md` has the
+questions to ask first.
 
-```ts
-export const color = {
-  accent: "#0B5FFF",       // your primary
-  accent2: "#00A3A3",      // your secondary
-  captionActive: "#FFE55C",// keep this loud; it is the caption highlight
-  // ...
-};
+```bash
+python scripts/brand.py --style corporate --import design-tokens.json
+python scripts/brand.py --logo logo.svg --logo-placement end
+python scripts/brand.py --caption-color "#FFE55C"   # keep the highlight loud
 ```
 
 Two things that go wrong every time:
@@ -109,10 +108,11 @@ in a deck, not to pop off a moving video at arm's length. If the primary is a
 mid-tone blue, the caption highlight in that blue is unreadable. Keep the
 highlight loud and let the brand live in the accents.
 
-Fonts: the template loads Inter from Google Fonts. If the brand font is
-licensed, check whether the license covers embedding in video before you swap
-it — many desktop licenses don't. A close Google Fonts substitute is a normal
-and defensible choice for social video.
+Fonts: any Google font works by name (`--font "Montserrat"`), and the brand's
+own file works too (`--font BrandSans.woff2`). If the brand font is licensed,
+check whether the license covers embedding in video before you use the file —
+many desktop licenses don't. A close Google Fonts substitute is a normal and
+defensible choice for social video.
 
 ## Logos
 

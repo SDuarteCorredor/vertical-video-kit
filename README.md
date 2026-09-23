@@ -122,6 +122,7 @@ python skills/vertical-video/scripts/wizard.py
 ```bash
 cd my-video
 
+python scripts/brand.py --compare   # pick a look: bold, clean, editorial, playful, corporate
 # write script.json (what is said) and src/content.ts (what is seen)
 
 python scripts/voice.py        # narration + scene timings
@@ -131,6 +132,12 @@ npm run render                 # output/video.mp4
 python scripts/publish.py      # upload/video.mp4, encoded for the platforms
 python scripts/share.py        # output/video_light.mp4, small enough for WhatsApp
 ```
+
+**Your brand, not the template's.** `scripts/brand.py` sets the look from a
+style plus whatever the brand already has: a design system file (JSON tokens,
+CSS variables, Tailwind), a logo, colors, any Google font or the brand's own
+font file. An agent asks about all of this before it builds anything — see
+[`references/style.md`](skills/vertical-video/references/style.md).
 
 The studio reloads on every save, so leave it open while you write. It works
 on a brand-new project too — scenes hold 3 seconds each until `voice.py` has
@@ -172,6 +179,7 @@ Full walkthrough for a machine with none of this installed:
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
 | `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
 | `install.py` | The one install command: dependencies, a project, the studio open |
+| `package.json` | One Remotion install shared by every project in the kit (~340 MB once, not per video) |
 | `docs/NO-AGENT.md` | Install and run with no AI, on Windows, macOS or Linux |
 | `docs/PROMPTS.md` | Prompts for agents, and for any free chat |
 

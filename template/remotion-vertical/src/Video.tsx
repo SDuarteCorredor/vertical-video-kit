@@ -12,7 +12,7 @@ import { SCENES } from "./content";
 import timings from "./timings.json";
 import { Scene } from "./scenes/Scene";
 import { Captions } from "./components/Captions";
-import { ProgressBar, SafeAreaOverlay, SceneShell } from "./components/Chrome";
+import { CornerLogo, ProgressBar, SafeAreaOverlay, SceneShell } from "./components/Chrome";
 import { SHOW_SAFE_AREAS, color } from "./theme";
 
 type Timing = { id: string; audio: number; frames: number };
@@ -66,6 +66,7 @@ export const Short: React.FC = () => {
       {/* Both of these live outside the sequences on purpose: inside one, the
           frame counter restarts at zero for every scene. */}
       <ProgressBar totalFrames={TOTAL_FRAMES} />
+      <CornerLogo />
       <Captions />
 
       {SHOW_SAFE_AREAS ? <SafeAreaOverlay /> : null}

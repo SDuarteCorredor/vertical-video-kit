@@ -205,6 +205,7 @@ how narration, timings and captions find each other.
 Then:
 
 ```bash
+python scripts/brand.py --compare   # the look: pick a style, then --logo, --accent, --font
 python scripts/voice.py        # narration + how long each scene lasts
 python scripts/captions.py     # word-by-word captions
 npm run dev                    # live preview in your browser

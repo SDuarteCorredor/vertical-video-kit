@@ -189,6 +189,45 @@ def write_project(target: str, lines: list[str], lang: str, voice: str) -> None:
         handle.write("\n];\n")
 
 
+STYLES = [
+    ("bold", "dark, heavy type, high contrast — creator / TikTok"),
+    ("clean", "light, airy, lots of white space — product, tips"),
+    ("editorial", "serif headlines on warm paper — magazine, opinion"),
+    ("playful", "saturated color, round shapes — consumer, events"),
+    ("corporate", "white and navy, logo on screen — institutional, B2B"),
+]
+
+
+def pick_look() -> list[str]:
+    """Asks for the look and returns the arguments for scripts/brand.py."""
+    rule("The look")
+    for i, (name, looks) in enumerate(STYLES, 1):
+        print(f"  {i}. {name:<10} {looks}")
+    choice = ask("Which style (number)", "1")
+    try:
+        style = STYLES[int(choice) - 1][0]
+    except (ValueError, IndexError):
+        style = "bold"
+    brand = ["--style", style]
+
+    print("\n  Your brand, if you have one. Press Enter to skip any of these.")
+    logo = ask("Logo file (SVG or transparent PNG)", "").strip().strip('"')
+    if logo:
+        if os.path.exists(os.path.expanduser(logo)):
+            where = ask("Logo: corner / end / both", "end").lower()
+            brand += ["--logo", logo, "--logo-placement",
+                      where if where in ("corner", "end", "both") else "end"]
+        else:
+            print(f"  No file at {logo} — skipping the logo.")
+    main = ask("Main brand color, as a hex code like #0B5FFF", "").strip()
+    if main:
+        brand += ["--accent", main]
+    font = ask("Brand font (a Google Fonts name)", "").strip()
+    if font:
+        brand += ["--font", font]
+    return brand
+
+
 def run(command: list[str], cwd: str) -> bool:
     print(f"\n  $ {' '.join(command)}")
     return subprocess.run(command, cwd=cwd, check=False).returncode == 0
@@ -224,6 +263,7 @@ def main() -> None:
         lang = args.lang
 
     lines = collect_lines()
+    look = pick_look()
 
     rule("Building the project")
     created = subprocess.run(
@@ -233,6 +273,9 @@ def main() -> None:
     )
     if created.returncode != 0 or not os.path.isdir(target):
         sys.exit("\n  Could not create the project.\n")
+
+    if not run([sys.executable, os.path.join("scripts", "brand.py"), *look], target):
+        print("  The look could not be applied — the video keeps the default style.")
 
     if lines:
         write_project(target, lines, lang, voice)
