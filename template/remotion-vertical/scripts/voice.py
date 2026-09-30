@@ -114,6 +114,38 @@ def synth_voicestudio(text: str, cfg: dict) -> bytes:
         raise
 
 
+def _trust_office_network(edge_tts) -> None:
+    """Let edge-tts trust the certificates this machine already trusts.
+
+    edge-tts verifies TLS against certifi's bundle only. An office network
+    that inspects HTTPS re-signs traffic with the company's own root
+    certificate — installed in Windows or macOS, absent from certifi — so the
+    free voice fails on every corporate laptop with a certificate error,
+    while the browser on the same machine works fine. Trust both: the
+    system's store (plus SSL_CERT_FILE, if IT set one) and certifi.
+    """
+    import ssl
+
+    communicate = getattr(edge_tts, "communicate", None)
+    if communicate is None or not hasattr(communicate, "_SSL_CTX"):
+        return  # a future edge-tts that builds its context differently
+    context = ssl.create_default_context()
+    try:
+        import certifi
+
+        context.load_verify_locations(certifi.where())
+    except Exception:
+        pass
+    for variable in ("SSL_CERT_FILE", "REQUESTS_CA_BUNDLE"):
+        bundle = os.environ.get(variable)
+        if bundle and os.path.isfile(bundle):
+            try:
+                context.load_verify_locations(bundle)
+            except Exception:
+                pass
+    communicate._SSL_CTX = context
+
+
 def synth_edge(text: str, cfg: dict) -> bytes:
     try:
         import edge_tts
@@ -123,10 +155,13 @@ def synth_edge(text: str, cfg: dict) -> bytes:
 
     import asyncio
 
+    _trust_office_network(edge_tts)
+    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy") or None
+
     async def run() -> bytes:
         chunks = bytearray()
         communicate = edge_tts.Communicate(
-            text, cfg["voice"], rate=str(cfg.get("rate", "+0%")),
+            text, cfg["voice"], rate=str(cfg.get("rate", "+0%")), proxy=proxy,
         )
         async for item in communicate.stream():
             if item["type"] == "audio":
@@ -144,9 +179,15 @@ def synth_edge(text: str, cfg: dict) -> bytes:
         hint = ""
         if "CERTIFICATE" in detail.upper() or "SSL" in detail.upper():
             hint = ("\n  A certificate error usually means a corporate proxy is "
-                    "inspecting\n  traffic. On a network like that, use the "
-                    "'voicestudio' engine instead —\n  it runs on your own "
-                    "machine and never leaves it.")
+                    "inspecting traffic\n  and its certificate is not installed "
+                    "where Python can see it. Ask IT for\n  the company's root "
+                    "certificate file and point SSL_CERT_FILE at it, or use\n  "
+                    "the 'voicestudio' engine, which never leaves this machine.")
+        elif proxy:
+            hint = (f"\n  This machine sends traffic through a proxy ({proxy}), and it "
+                    f"may be\n  blocking the voice service. Ask IT to allow "
+                    f"speech.platform.bing.com,\n  or use the 'voicestudio' engine, "
+                    f"which never leaves this machine.")
         elif "404" in detail or "invalid" in detail.lower():
             hint = (f"\n  Check that '{cfg['voice']}' is a real voice:  "
                     f"python scripts/voice.py --list-voices")

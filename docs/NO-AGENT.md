@@ -338,6 +338,8 @@ And for anyone who does have Claude Code:
 | `FFmpeg is missing` | Not on the PATH. Close the terminal, open a new one. Still missing? Reinstall |
 | `VoiceStudio is not answering` | You're on the `voicestudio` engine without the app open. Set `"engine": "edge"` in `script.json` |
 | `edge-tts is missing` | `pip install edge-tts` |
+| `edge-tts could not reach the voice service` at the office | The company network blocks or inspects traffic. Ask IT to allow `speech.platform.bing.com`, or for the company's root certificate and point `SSL_CERT_FILE` at it. Alternative: the `voicestudio` engine, which never leaves the machine |
+| `Font "..." did not load` while rendering | No internet, or the network blocks Google Fonts. The video still renders, in a system font. For the brand font without depending on the internet: `python scripts/brand.py --font path/to/font.woff2` |
 | Captions come out empty | `faster-whisper` is missing. `pip install faster-whisper`. First run downloads the model, so it's slow |
 | `node -v` below v18 | Remotion needs 18+. Get a current build from [nodejs.org](https://nodejs.org) |
 | `externally-managed-environment` | Use a virtualenv: `python3 -m venv .venv && source .venv/bin/activate` |

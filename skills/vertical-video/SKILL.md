@@ -105,6 +105,10 @@ They are different texts on purpose. The screen can carry fragments; the voice
 needs whole sentences. Writing one and pasting it into the other is the most
 common reason a video sounds like a machine reading a slide.
 
+If `private/` exists at the kit root, read it first: it holds the company's
+own brief, approved scripts and decisions, kept out of the public repository.
+Use it, and never copy it into a tracked file, commit or pull request.
+
 If the video carries a company's name, read `references/corporate.md` before
 writing — brand, approvals and what may not be claimed all change the job. A
 project scaffolded by `new_project.py` ships a `BRAND.md` to fill in once per

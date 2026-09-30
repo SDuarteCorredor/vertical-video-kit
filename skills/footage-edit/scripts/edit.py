@@ -18,12 +18,15 @@ edit.json (paths are relative to the json file):
      "zoom": 1.09,                 starting push-in (1.0 = none)
      "zoom_speed": 0.035,          how much it pushes in per second
      "x": 0.5, "y": 0.15,          where it pushes toward: 0 = left/top, 1 = right/bottom
-     "stabilize": true}
+     "stabilize": true},
+    {"file": "raw/testimonial.mp4", "start": 12.0, "duration": 18.0,
+     "audio": true}                keep what this take says; the rest stay silent
   ]
 }
 
 The Spanish keys from the original workspace (salida, tomas, archivo, inicio,
-duracion, rotar, cruce, zoom_vel, estabilizar...) are accepted too.
+duracion, rotar, cruce, zoom_vel, estabilizar, audio/voz/sonido...) are
+accepted too.
 
 Why each step is the way it is:
 - Rotation happens BEFORE stabilizing: vidstab removes shake, not a fixed tilt.
@@ -34,6 +37,14 @@ Why each step is the way it is:
   animate its own width and height over time, only its position.
 - vidstab gets relative paths: a Windows path with "C:" breaks the filter
   parser, so every step runs with the work folder as its cwd.
+- Clips are silent unless they ask for "audio": room sound from five takes
+  never matches, but a testimonial without its voice is not a testimonial.
+  Kept audio is loudness-normalised per clip, so two speakers recorded at
+  different distances land at the same level, and crossfades with the
+  picture. Music ducks under it rather than fighting it.
+- A take that keeps its audio pushes in far more slowly by default. The
+  standard 2.5%/s suits a 4-second shot; over an 18-second testimonial it
+  ends 45% closer, on someone's nose.
 """
 from __future__ import annotations
 
@@ -55,10 +66,23 @@ SPANISH = {
     "archivo": "file", "inicio": "start", "duracion": "duration", "duración": "duration",
     "rotar": "rotate", "zoom_vel": "zoom_speed", "estabilizar": "stabilize",
     "contraste": "contrast", "saturacion": "saturation", "saturación": "saturation",
-    "brillo": "brightness",
+    "brillo": "brightness", "voz": "audio", "sonido": "audio",
 }
 
 COLOR = {"contrast": 1.08, "saturation": 1.18, "brightness": 0.02, "gamma": 1.03}
+
+# Spoken-word target, the same one publish.py uses for narration.
+LOUDNESS = "loudnorm=I=-16:TP=-1.5:LRA=11"
+AUDIO_FORMAT = "aformat=sample_rates=48000:channel_layouts=stereo"
+RATE = 48000
+
+
+def fit(seconds: float) -> str:
+    """Filters that make audio exactly `seconds` long: pad with silence,
+    then cut by sample count. Cutting by time does not work here — loudnorm
+    leaves gaps in the timestamps, and a time-based atrim comes up ~0.1s
+    short per clip, which shifts every crossfade after it."""
+    return f"asetpts=N/SR/TB,apad,atrim=end_sample={round(seconds * RATE)}"
 
 
 def english(value):
@@ -77,9 +101,24 @@ def run(args: list[str], cwd: Path | None = None) -> None:
 
 
 def duration(path: Path) -> float:
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
-                          "-of", "csv=p=0", str(path)], capture_output=True, text=True).stdout
-    return float(out.strip() or 0)
+    """Length of the picture. The container's length is the longer of video
+    and audio, and the crossfades have to follow the picture."""
+    for query in (["-select_streams", "v:0", "-show_entries", "stream=duration"],
+                  ["-show_entries", "format=duration"]):
+        out = subprocess.run(["ffprobe", "-v", "error", *query, "-of", "csv=p=0",
+                              str(path)], capture_output=True, text=True).stdout
+        try:
+            return float(out.strip().splitlines()[0])
+        except (ValueError, IndexError):
+            continue
+    return 0.0
+
+
+def has_audio(path: Path) -> bool:
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a",
+                          "-show_entries", "stream=index", "-of", "csv=p=0", str(path)],
+                         capture_output=True, text=True).stdout
+    return bool(out.strip())
 
 
 def has_vidstab() -> bool:
@@ -93,11 +132,20 @@ def process(i: int, clip: dict, base: Path, work: Path, cfg: dict, stabilize_ok:
     W, H = cfg.get("width", 1080), cfg.get("height", 1920)
     c = {**COLOR, **cfg.get("color", {})}
     raw = f"clip{n}_raw.mp4"
+    source = base / clip["file"]
+
+    keep = bool(clip.get("audio"))
+    if keep and not has_audio(source):
+        print(f"    {clip['file']} has no sound to keep — using it silent.")
+        keep = False
+    # Only video filters run on the clip, so its sound stays in sync through
+    # rotate, stabilize and the push-in without any extra work.
+    sound = ["-c:a", "aac", "-b:a", "192k"] if keep else ["-an"]
 
     pre = [f"rotate={clip['rotate']}*PI/180:c=black"] if clip.get("rotate") else []
     vf = ["-vf", ",".join(pre)] if pre else []
-    run(["ffmpeg", "-y", "-ss", str(clip.get("start", 0)), "-i", str(base / clip["file"]),
-         "-t", str(clip["duration"]), "-an", *vf,
+    run(["ffmpeg", "-y", "-ss", str(clip.get("start", 0)), "-i", str(source),
+         "-t", str(clip["duration"]), *sound, *vf,
          "-c:v", "libx264", "-crf", "16", "-preset", "veryfast", "-pix_fmt", "yuv420p", raw],
         cwd=work)
 
@@ -108,7 +156,8 @@ def process(i: int, clip: dict, base: Path, work: Path, cfg: dict, stabilize_ok:
             cwd=work)
         chain.append(f"vidstabtransform=input=clip{n}.trf:zoom=0:optzoom=1:smoothing=15:crop=black")
 
-    z0, zv = clip.get("zoom", 1.06), clip.get("zoom_speed", 0.025)
+    z0 = clip.get("zoom", 1.06)
+    zv = clip.get("zoom_speed", 0.008 if keep else 0.025)
     x, y = clip.get("x", 0.5), clip.get("y", 0.2)
     chain += [
         # Cover the frame first, so horizontal or odd-sized footage is cropped
@@ -124,9 +173,41 @@ def process(i: int, clip: dict, base: Path, work: Path, cfg: dict, stabilize_ok:
         "format=yuv420p",
     ]
     done = f"clip{n}_done.mp4"
-    run(["ffmpeg", "-y", "-i", raw, "-vf", ",".join(chain), "-an",
+    # The sound ends exactly where the picture does: a clip whose audio
+    # outlasts or undershoots its video throws every crossfade after it off.
+    sound = (["-af", f"{LOUDNESS},{AUDIO_FORMAT},{fit(duration(work / raw))}",
+              "-c:a", "aac", "-b:a", "192k"] if keep else ["-an"])
+    run(["ffmpeg", "-y", "-i", raw, "-vf", ",".join(chain), *sound,
          "-c:v", "libx264", "-crf", "16", "-preset", "slow", done], cwd=work)
     return work / done
+
+
+def speech_track(clips: list[Path], lengths: list[float], crossfade: float,
+                 graph: list[str]) -> bool:
+    """Add a [speech] label joining every clip's own sound, or return False.
+
+    Silent clips get silence of their exact length, so the audio crossfades
+    line up with the picture's one for one. When no clip kept its sound
+    there is nothing to add, and the edit behaves exactly as it always has.
+    """
+    kept = [has_audio(c) for c in clips]
+    if not any(kept):
+        return False
+    for k, (clip_has, length) in enumerate(zip(kept, lengths)):
+        source = f"[{k}:a]" if clip_has else f"anullsrc=r={RATE}:cl=stereo,"
+        graph.append(f"{source}{AUDIO_FORMAT},{fit(length)}[a{k}]")
+    if len(clips) == 1:
+        graph.append("[a0]anull[speech]")
+    elif crossfade > 0.01:
+        prev = "a0"
+        for k in range(1, len(clips)):
+            label = "speech" if k == len(clips) - 1 else f"ax{k}"
+            graph.append(f"[{prev}][a{k}]acrossfade=d={crossfade}:c1=tri:c2=tri[{label}]")
+            prev = label
+    else:
+        joined = "".join(f"[a{k}]" for k in range(len(clips)))
+        graph.append(f"{joined}concat=n={len(clips)}:v=0:a=1[speech]")
+    return True
 
 
 def join(clips: list[Path], out: Path, crossfade: float, fps: int, music: Path | None) -> None:
@@ -144,11 +225,26 @@ def join(clips: list[Path], out: Path, crossfade: float, fps: int, music: Path |
 
     args = ["ffmpeg", "-y", *inputs]
     maps = ["-map", "[vout]" if len(clips) > 1 else "0:v"]
+    speech = speech_track(clips, lengths, crossfade, graph)
+    fade_at = max(expected - 1.5, 0)
     if music:
         args += ["-i", str(music)]
-        fade_at = max(expected - 1.5, 0)
-        graph.append(f"[{len(clips)}:a]atrim=0:{expected:.3f},"
-                     f"afade=t=out:st={fade_at:.3f}:d=1.5[aout]")
+        graph.append(f"[{len(clips)}:a]{AUDIO_FORMAT},{fit(expected)},"
+                     f"afade=t=out:st={fade_at:.3f}:d=1.5[music]")
+        if speech:
+            # Music at a bed level, pushed down further whenever someone
+            # speaks and back up in the gaps, instead of two tracks at once.
+            graph.append("[speech]asplit=2[say][key]")
+            graph.append("[music]volume=0.35[bed]")
+            graph.append("[bed][key]sidechaincompress=threshold=0.02:ratio=8"
+                         ":attack=30:release=500[ducked]")
+            graph.append("[say][ducked]amix=inputs=2:duration=first:normalize=0,"
+                         f"{fit(expected)}[aout]")
+        else:
+            graph.append("[music]anull[aout]")
+    elif speech:
+        graph.append(f"[speech]{fit(expected)}[aout]")
+    if music or speech:
         maps += ["-map", "[aout]", "-c:a", "aac", "-b:a", "192k"]
     if graph:
         args += ["-filter_complex", ";".join(graph)]

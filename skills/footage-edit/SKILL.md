@@ -64,6 +64,7 @@ Copy `edit.example.json` next to the footage and fill in one entry per shot:
 | `zoom_speed` | how much it pushes in per second | 0.025–0.04 |
 | `x`, `y` | where the push-in heads (0 = left/top, 1 = right/bottom) | 0.5, 0.2 |
 | `stabilize` | removes hand shake | on; turn off for tripod shots |
+| `audio` | keeps what this take says (Spanish: `voz`) | off; on for someone speaking to camera |
 | `color` (top level) | contrast, saturation, brightness, gamma | the defaults suit most phone footage |
 
 Horizontal footage works too: it is cropped to fill 9:16, never squashed. Aim
@@ -99,10 +100,27 @@ edges: aim `x`/`y` away from the mug, the bottle, the cable, and the push-in
 crops it out.
 
 **Short shots.** Three to five seconds. Phone footage that holds longer than
-that reads as unedited.
+that reads as unedited — except a take someone is speaking in, which runs as
+long as what they say.
 
-**Music, not live sound.** Clips are processed silent. Room audio from five
-different takes never matches; one music track over all of them does.
+**Music, not live sound — unless someone is talking.** Clips are processed
+silent by default. Room audio from five different takes never matches; one
+music track over all of them does.
+
+A testimonial, a spokesperson, anyone speaking to camera, is the exception:
+mark that take `"audio": true`. Then:
+
+- Its sound is kept and brought to the same spoken-word level (-16 LUFS) as
+  the narration elsewhere in the kit, so two people recorded at different
+  distances from the phone come out equally loud.
+- It crossfades with the picture. Takes without the flag stay silent.
+- If there is `music`, it drops about 15 dB while someone speaks and comes
+  back up in the gaps, instead of fighting the voice.
+- The push-in slows to 0.008 per second by default. The usual 0.025 suits a
+  four-second shot; over a 16-second testimonial it ends 40% closer, on
+  someone's nose. Set `zoom_speed` yourself to override it.
+- Give a speaking take the whole sentence, not three to five seconds. Cut on
+  a pause, never mid-word — check the `start` against the audio.
 
 ## Mistakes that cost the most
 

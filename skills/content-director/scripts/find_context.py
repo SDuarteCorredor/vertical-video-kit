@@ -36,6 +36,9 @@ def scan(root: Path, depth: int = 5):
             p = Path(dirpath) / f
             if p.suffix.lower() not in EXTS:
                 continue
+            if "/private/" in str(p) and "private" in str(root):
+                yield "private/ (read all of it first)", p
+                continue
             name, low = p.name.lower(), str(p).lower()
             kind = next((k for k, keys in PATTERNS.items() if any(x in name for x in keys)), None) \
                 or next((k for k, keys in PATTERNS.items() if any(x in low for x in keys)), None)
@@ -43,7 +46,7 @@ def scan(root: Path, depth: int = 5):
                 yield kind, p
 
 def main() -> None:
-    roots = [Path(a) for a in sys.argv[1:]] or [Path.cwd(), Path("~/Desktop"), Path("~/Documents"), Path("~/Downloads")]
+    roots = [Path(a) for a in sys.argv[1:]] or [Path.cwd() / "private", Path.cwd(), Path("~/Desktop"), Path("~/Documents"), Path("~/Downloads")]
     found: dict[str, list[Path]] = {}
     seen = set()
     for r in roots:

@@ -10,6 +10,23 @@ verb, acronyms, symbols, sentences with no punctuation to breathe in.
 acronyms, expanding `%` and `$`, turning ellipses into breathable commas. That
 fixes the mechanical half. The other half is how you write.
 
+What it does for Spanish, since corporate copy is full of these:
+
+| Written | Said |
+|---|---|
+| `$1.500.000 COP/mes` | 1.500.000 pesos al mes |
+| `US$99` | 99 dólares |
+| `hola@empresa.com.co` | hola arroba empresa punto com punto co |
+| `RR.HH.`, `EE.UU.`, `Ltda.` | recursos humanos, Estados Unidos, limitada |
+| `48h`, `24/7`, `Q3` | 48 horas, veinticuatro siete, tercer trimestre |
+| `DIAN`, `SENA`, `NIT`, `SOAT` | said as words |
+| `ARL`, `EPS`, `SST` | spelled: A R L |
+
+Preview any line before generating audio:
+`python scripts/text_prep.py --lang es "Tu línea aquí"`. If an acronym your
+company says as a word gets spelled out, add it to `SAID_AS_WORDS` in
+`scripts/text_prep.py` — a wrong guess there is very audible.
+
 ## Choosing an engine
 
 Set `"engine"` in `script.json`.

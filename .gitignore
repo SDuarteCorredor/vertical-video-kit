@@ -20,13 +20,18 @@ sample.mp3
 !docs/**/*.mp4
 
 # Projects created by install.py live inside the clone. They are your work,
-# not part of the kit — rename the folder if you want to track one.
+# not part of the kit, and this repository is public. new_project.py also
+# drops a "*" .gitignore into every project it creates here, whatever its name.
 /my-video/
 studio.log
 
 # Reference research (downloaded videos, frames, transcripts): third-party
 # material studied privately, never part of the kit.
 /research/
+
+# Company context — brand briefs, approved scripts, internal decisions —
+# for agents to read on this machine only. Never pushed. See AGENTS.md.
+/private/
 
 # Python
 __pycache__/

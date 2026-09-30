@@ -64,6 +64,27 @@ the PATH in a **new** terminal.
 
 ---
 
+## Company context lives in `private/`, never in the repo
+
+**This repository is public.** A company's brand brief, approved scripts,
+voices, internal decisions, people's names and numbers belong in `private/`
+at the kit root. It is gitignored, so it stays on this machine.
+
+- **Before building anything, read every file in `private/` if the folder
+  exists.** That is where the person's earlier work and decisions are — what
+  they approved, what they rejected, exact colours and fonts, prompts that
+  worked. Apply it; don't re-ask what it already answers.
+- **Never copy from it into a tracked file**, a commit message, a pull
+  request or an issue: not a name, a phone number, an email address, an
+  unpublished figure, not even the company's name as an example. Anything
+  generic the kit should learn goes into the kit in generic words.
+- Projects created inside the kit are ignored too: `new_project.py` writes a
+  `*` .gitignore into each one, whatever its name. Don't delete it.
+- If the person asks you to push something that came from `private/`, tell
+  them the repository is public and let them decide.
+
+---
+
 ## What this repo is
 
 A kit for making 9:16 short-form video (TikTok, Reels, Shorts) **in code**:

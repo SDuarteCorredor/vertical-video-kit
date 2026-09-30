@@ -148,6 +148,16 @@ worked in `contenido/aprendizajes.md` — that file feeds the next scripts.
 
 ## Folder the skill maintains
 
+Where it lives:
+- Inside this kit (or any **public** repository): `private/contenido/` — the
+  kit's `private/` folder is gitignored. Read every file in `private/` first.
+- In the company's own folder: `contenido/`. If that folder is a git repo,
+  check whether it is public (`gh repo view --json visibility`) and add
+  `contenido/referentes/` to `.gitignore` at least; ask before pushing brand
+  data anywhere public.
+- Never copy names, numbers or brand details from these files into a tracked
+  file, commit message, PR or issue.
+
 ```
 contenido/
   marca.md          who, what, audience, goal, verified data, limits
