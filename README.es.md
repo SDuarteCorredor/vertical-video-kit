@@ -211,6 +211,24 @@ dejar abierta — si no está corriendo, `voice.py` se pasa a `edge` y te avisa.
 Colombia narrado en español de España suena importado y distrae más de lo que
 uno esperaría. `es-CO-SalomeNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
 
+## En un computador más modesto
+
+El kit se ajusta solo al computador donde corre. No hay nada que configurar.
+
+- **El render** abre un Chrome invisible por cada proceso, y cada uno gasta
+  ~1,2 GB de RAM. Remotion por defecto abre uno por núcleo, lo que deja a un
+  portátil de 8 núcleos y 8 GB intercambiando a disco hasta que se arrastra o
+  se cae. `remotion.config.ts` limita los procesos también por la memoria
+  disponible — contando los límites de contenedores — así que termina, solo
+  que más lento.
+- **Los subtítulos** usan el modelo `tiny` de Whisper en vez de `base` cuando
+  hay menos de ~4 GB de RAM disponible.
+
+`python skills/vertical-video/scripts/doctor.py` muestra qué eligió y por qué.
+Para forzarlo: `REMOTION_CONCURRENCY=2 npm run render` (en PowerShell:
+`$env:REMOTION_CONCURRENCY=2; npm run render`), o
+`python scripts/captions.py --model base`.
+
 ## Requisitos
 
 - **Node 18+** y **FFmpeg** — obligatorios

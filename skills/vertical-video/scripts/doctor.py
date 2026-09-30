@@ -80,6 +80,80 @@ def has_module(name: str) -> bool:
         return False
 
 
+def memory_gb() -> float | None:
+    """Available RAM, container limits included. None if it can't tell."""
+    if sys.platform.startswith("linux"):
+        host = None
+        try:
+            with open("/proc/meminfo", encoding="utf-8") as handle:
+                fields = {}
+                for line in handle:
+                    key, _, value = line.partition(":")
+                    if key in ("MemAvailable", "MemTotal"):
+                        fields[key] = int(value.split()[0]) * 1024
+            host = fields.get("MemAvailable", fields.get("MemTotal"))
+        except (OSError, ValueError):
+            pass
+        for path in ("/sys/fs/cgroup/memory.max",
+                     "/sys/fs/cgroup/memory/memory.limit_in_bytes"):
+            try:
+                with open(path, encoding="utf-8") as handle:
+                    limit = int(handle.read().strip())
+                if 0 < limit < (1 << 62) and (host is None or limit < host):
+                    return limit / 1024 ** 3
+            except (OSError, ValueError):
+                continue
+        return host / 1024 ** 3 if host else None
+    if sys.platform == "darwin":
+        try:
+            out = subprocess.run(["sysctl", "-n", "hw.memsize"],
+                                 capture_output=True, text=True, timeout=5)
+            return int(out.stdout.strip()) / 1024 ** 3
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            return None
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+
+            class Status(ctypes.Structure):
+                _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong)] + [
+                    (n, ctypes.c_ulonglong) for n in (
+                        "total", "avail", "totalPage", "availPage",
+                        "totalVirtual", "availVirtual", "availExt")]
+
+            status = Status()
+            status.dwLength = ctypes.sizeof(Status)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))
+            return status.avail / 1024 ** 3
+        except Exception:
+            return None
+    return None
+
+
+def machine_report() -> None:
+    """What the kit will do on this machine, so a slow render isn't a mystery.
+
+    Mirrors remotion.config.ts (render workers) and captions.py (Whisper
+    model). Keep the numbers in step if either changes.
+    """
+    cores = os.cpu_count() or 1
+    memory = memory_gb()
+    workers = min(cores, max(1, int(memory // 1.2))) if memory else cores
+    model = "tiny" if memory is not None and memory < 4 else "base"
+
+    print("\n  This machine\n  " + "-" * 44)
+    print(f"  {'cores':<16} {cores}")
+    print(f"  {'RAM available':<16} "
+          + (f"{memory:.1f} GB" if memory is not None else "unknown"))
+    print(f"  {'render workers':<16} {workers}"
+          + ("   (limited by RAM, not cores)" if workers < cores else ""))
+    print(f"  {'caption model':<16} {model}"
+          + ("   (lighter, for low RAM)" if model == "tiny" else ""))
+    if memory is not None and memory < 4:
+        print("    Low on memory: close the browser tabs you don't need while")
+        print("    rendering. It will finish, just slower than on a bigger machine.")
+
+
 def voicestudio_up() -> tuple[bool, str]:
     try:
         with urllib.request.urlopen(
@@ -146,6 +220,8 @@ def main() -> None:
         if not present and args.install:
             print(f"    installing {package}...")
             subprocess.run([sys.executable, "-m", "pip", "install", "-q", package])
+
+    machine_report()
 
     print("\n  Voice engines\n  " + "-" * 44)
     up, detail = voicestudio_up()

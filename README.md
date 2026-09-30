@@ -204,6 +204,23 @@ if it isn't running, `voice.py` falls back to `edge` and says so.
 
 Nothing leaves the machine on either free engine.
 
+## On a smaller machine
+
+The kit sizes itself to the computer it runs on. Nothing to configure.
+
+- **Rendering** uses one headless Chrome per worker, and each costs ~1.2GB of
+  RAM. Remotion's default is one worker per CPU core, which makes an 8-core,
+  8GB laptop swap until it crawls or crashes. `remotion.config.ts` caps the
+  workers by available memory too — container limits included — so it
+  finishes, just slower.
+- **Captions** use Whisper's `tiny` model instead of `base` under ~4GB of
+  available RAM.
+
+`python skills/vertical-video/scripts/doctor.py` shows what it picked and why.
+To override: `REMOTION_CONCURRENCY=2 npm run render` (PowerShell:
+`$env:REMOTION_CONCURRENCY=2; npm run render`), or
+`python scripts/captions.py --model base`.
+
 ## Requirements
 
 - **Node 18+** and **FFmpeg** — required

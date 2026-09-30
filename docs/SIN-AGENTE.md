@@ -354,6 +354,7 @@ Y con Claude Code, si alguien sí lo tiene pago:
 | `externally-managed-environment` | Usa un entorno virtual: `python3 -m venv .venv && source .venv/bin/activate` |
 | El texto queda tapado por TikTok | Pon `SHOW_SAFE_AREAS = true` en `src/theme.ts` y mira dónde cae. Ver [`design.md`](../skills/vertical-video/references/design.md) |
 | El render se demora muchísimo | Es normal la primera vez: Remotion baja un Chromium. Después es más rápido |
+| El render se cae o el computador se congela | Poca RAM. El kit ya limita los procesos solo; si igual pasa, cierra el navegador y usa `REMOTION_CONCURRENCY=1 npm run render` (PowerShell: `$env:REMOTION_CONCURRENCY=1; npm run render`) |
 | El visualizador no abre solo | Pega la dirección que imprimió (`http://localhost:3000`) en el navegador a mano |
 | `localhost:3000` no responde | Mira `studio.log` dentro de la carpeta del proyecto: ahí queda el error |
 | El puerto 3000 está ocupado | Se pasa solo al 3001, 3002… Fíjate en la dirección que imprimió |

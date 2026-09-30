@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 
 try:
@@ -25,10 +26,89 @@ except Exception:
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Below this, "base" is too much model for the machine to load comfortably —
+# drop to "tiny" instead of making someone's laptop swap to transcribe five
+# lines of narration. None (detection failed) keeps the old default: assume
+# a capable machine rather than downgrade someone who is actually fine.
+LOW_MEMORY_GB = 4.0
+
 
 def load(path: str) -> dict:
     with open(path, encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def available_memory_gb() -> float | None:
+    """Best-effort RAM detection, so a weak machine gets a lighter default."""
+    if sys.platform.startswith("linux"):
+        host_bytes = None
+        try:
+            with open("/proc/meminfo", encoding="utf-8") as handle:
+                fields = {}
+                for line in handle:
+                    key, _, value = line.partition(":")
+                    if key in ("MemAvailable", "MemTotal"):
+                        fields[key] = int(value.split()[0]) * 1024
+            host_bytes = fields.get("MemAvailable", fields.get("MemTotal"))
+        except (OSError, ValueError):
+            pass
+
+        # A cgroup limit (containers, CI, a memory-capped VM) is the real
+        # ceiling when tighter than the host's — /proc/meminfo alone reports
+        # the host, which overstates what a container can actually use.
+        for path in ("/sys/fs/cgroup/memory.max",
+                     "/sys/fs/cgroup/memory/memory.limit_in_bytes"):
+            try:
+                with open(path, encoding="utf-8") as handle:
+                    limit = int(handle.read().strip())
+                # cgroup v1's "no limit" sentinel sits just under 2**63;
+                # anything near that is "unset", not a real cap.
+                if 0 < limit < (1 << 62) and (host_bytes is None or limit < host_bytes):
+                    return limit / (1024 ** 3)
+            except (OSError, ValueError):
+                continue
+
+        return host_bytes / (1024 ** 3) if host_bytes else None
+
+    if sys.platform == "darwin":
+        try:
+            out = subprocess.run(["sysctl", "-n", "hw.memsize"],
+                                 capture_output=True, text=True, timeout=5)
+            return int(out.stdout.strip()) / (1024 ** 3)
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            return None
+
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+
+            class MEMORYSTATUSEX(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+
+            status = MEMORYSTATUSEX()
+            status.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))  # type: ignore[attr-defined]
+            return status.ullAvailPhys / (1024 ** 3)
+        except Exception:
+            return None
+
+    return None
+
+
+def pick_model(explicit: str | None) -> tuple[str, str]:
+    """The Whisper model to use, and one line explaining the pick."""
+    if explicit:
+        return explicit, f"{explicit} (requested)"
+    memory = available_memory_gb()
+    if memory is not None and memory < LOW_MEMORY_GB:
+        return "tiny", f"tiny — {memory:.1f}GB available is tight for base"
+    return "base", "base (default)"
 
 
 def words_faster_whisper(path: str, lang: str | None, model_name: str, cache: dict):
@@ -97,8 +177,9 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--engine", default="auto",
                         choices=["auto", "faster-whisper", "whisper", "estimate"])
-    parser.add_argument("--model", default="base",
-                        help="Whisper size: tiny, base, small, medium, large-v3")
+    parser.add_argument("--model", default=None,
+                        help="Whisper size: tiny, base, small, medium, large-v3. "
+                             "Default: base, or tiny under ~4GB of available RAM.")
     parser.add_argument("--lang", help="force a language code, e.g. es or en")
     args = parser.parse_args()
 
@@ -127,8 +208,11 @@ def main() -> None:
             print("\n  Whisper is not installed — falling back to estimated "
                   "timings.\n  For real ones:  pip install faster-whisper\n")
 
+    model_name, model_note = pick_model(args.model) if engine.endswith("whisper") \
+        else (args.model or "", "")
+
     print(f"\n  Captions with: {engine}"
-          + (f" ({args.model})" if engine.endswith("whisper") else "") + "\n")
+          + (f" ({model_note})" if engine.endswith("whisper") else "") + "\n")
 
     cache: dict = {}
     words: list[dict] = []
@@ -142,9 +226,9 @@ def main() -> None:
             source = words_estimated(text_by_id.get(scene["id"], ""),
                                      scene.get("audio", 0.0))
         elif engine == "faster-whisper":
-            source = words_faster_whisper(audio_path, lang, args.model, cache)
+            source = words_faster_whisper(audio_path, lang, model_name, cache)
         else:
-            source = words_whisper(audio_path, lang, args.model, cache)
+            source = words_whisper(audio_path, lang, model_name, cache)
 
         for start, end, text in source:
             words.append({"start": round(offset + start, 3),

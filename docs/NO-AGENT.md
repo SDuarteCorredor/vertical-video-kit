@@ -343,6 +343,7 @@ And for anyone who does have Claude Code:
 | `externally-managed-environment` | Use a virtualenv: `python3 -m venv .venv && source .venv/bin/activate` |
 | Text hidden behind TikTok's UI | Set `SHOW_SAFE_AREAS = true` in `src/theme.ts` and look. See [`design.md`](../skills/vertical-video/references/design.md) |
 | The render takes forever | Normal the first time — Remotion downloads a Chromium. It's faster after that |
+| The render crashes or the machine freezes | Low RAM. The kit already caps workers; if it still happens, close the browser and use `REMOTION_CONCURRENCY=1 npm run render` (PowerShell: `$env:REMOTION_CONCURRENCY=1; npm run render`) |
 | The studio doesn't open by itself | Paste the address it printed (`http://localhost:3000`) into your browser |
 | `localhost:3000` doesn't answer | Check `studio.log` inside the project folder — the error is in there |
 | Port 3000 is taken | It moves to 3001, 3002… Use the address it printed |
