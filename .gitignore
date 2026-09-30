@@ -24,6 +24,10 @@ sample.mp3
 /my-video/
 studio.log
 
+# Reference research (downloaded videos, frames, transcripts): third-party
+# material studied privately, never part of the kit.
+/research/
+
 # Python
 __pycache__/
 *.pyc
@@ -41,3 +45,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# Santi's reels (personal work, never part of the public kit)
+/santi-reels/

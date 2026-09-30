@@ -62,7 +62,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("video")
-    parser.add_argument("--model", default="base")
+    parser.add_argument("--model", default="small")
     parser.add_argument("--lang")
     parser.add_argument("--json", dest="json_out")
     args = parser.parse_args()
