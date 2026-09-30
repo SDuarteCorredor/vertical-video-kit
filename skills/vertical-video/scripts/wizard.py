@@ -219,9 +219,18 @@ def pick_look() -> list[str]:
                       where if where in ("corner", "end", "both") else "end"]
         else:
             print(f"  No file at {logo} — skipping the logo.")
-    main = ask("Main brand color, as a hex code like #0B5FFF", "").strip()
-    if main:
-        brand += ["--accent", main]
+    while True:
+        main = ask("Main brand color, as a hex code like #0B5FFF", "").strip()
+        if not main:
+            break
+        # "azul" or a half-copied code would make brand.py reject the whole
+        # look, style included. Ask again rather than lose the style.
+        code = main if main.startswith("#") else "#" + main
+        if re.fullmatch(r"#[0-9A-Fa-f]{6}", code):
+            brand += ["--accent", code.upper()]
+            break
+        print(f"  '{main}' is not a hex code. It looks like #0B5FFF — six characters")
+        print("  from the brand manual. Press Enter to skip it.")
     font = ask("Brand font (a Google Fonts name)", "").strip()
     if font:
         brand += ["--font", font]
@@ -274,8 +283,21 @@ def main() -> None:
     if created.returncode != 0 or not os.path.isdir(target):
         sys.exit("\n  Could not create the project.\n")
 
-    if not run([sys.executable, os.path.join("scripts", "brand.py"), *look], target):
-        print("  The look could not be applied — the video keeps the default style.")
+    brand_py = [sys.executable, os.path.join("scripts", "brand.py")]
+    if not run(brand_py + look, target):
+        # A font name Google doesn't know is the usual culprit. Drop that and
+        # keep the rest; failing that, keep at least the style they chose
+        # rather than silently falling back to the default one.
+        without_font = [a for i, a in enumerate(look)
+                        if a != "--font" and (i == 0 or look[i - 1] != "--font")]
+        if without_font != look and run(brand_py + without_font, target):
+            print("  Applied everything but the font. Give it the brand's font file with:")
+            print("    python scripts/brand.py --font path/to/font.woff2")
+        elif run(brand_py + look[:2], target):
+            print("  Kept the style, but not the brand details above. Fix them with:")
+            print("    python scripts/brand.py --help")
+        else:
+            print("  The look could not be applied — the video keeps the default style.")
 
     if lines:
         write_project(target, lines, lang, voice)

@@ -10,7 +10,6 @@
  * once the color sits next to the real one.
  */
 import {
-  cancelRender,
   continueRender,
   delayRender,
   getInputProps,
@@ -127,8 +126,11 @@ export const color = {
 // type
 
 type FontModule = {
-  getInfo: () => { fonts: Record<string, Record<string, unknown>>; unicodeRanges: Record<string, string> };
-  loadFont: (style: string, options: { weights: string[]; subsets: string[] }) => { fontFamily: string };
+  getInfo: () => {
+    fontFamily: string;
+    fonts: Record<string, Record<string, Record<string, string>>>;
+    unicodeRanges: Record<string, string>;
+  };
 };
 
 const nearest = (available: number[], wanted: number) =>
@@ -145,7 +147,31 @@ const loaded = new Map<string, string>();
  * Only the weights and subsets actually used are loaded. The unrestricted
  * call fetches well over a hundred files on every render worker, which slows
  * the render down and makes it fail outright on a bad connection.
+ *
+ * A font that will not load never stops the render. @remotion/google-fonts
+ * rethrows after its retries, which kills the whole video over one missing
+ * file — on a machine with no internet, or an office network that blocks
+ * fonts.gstatic.com, nothing would render at all. Here a failure logs a
+ * warning naming the font and the video renders in the fallback stack.
  */
+const loadFace = (family: string, url: string, descriptors: FontFaceDescriptors) => {
+  const handle = delayRender(`Loading font ${family}`, { timeoutInMilliseconds: 30000 });
+  new FontFace(family, `url('${url}')`, descriptors)
+    .load()
+    .then((face) => {
+      // lib.dom leaves add() off FontFaceSet; every browser has it.
+      (document.fonts as unknown as { add: (f: FontFace) => void }).add(face);
+    })
+    .catch((err) => {
+      console.warn(
+        `Font "${family}" did not load (${String(err)}). Rendering with the ` +
+          `fallback font instead. Check the internet connection, or give ` +
+          `brand.py the font file:  python scripts/brand.py --font path/to/font.woff2`,
+      );
+    })
+    .finally(() => continueRender(handle));
+};
+
 const loadFamily = (name: string, weights: number[]): string => {
   const key = `${name}|${weights.join(",")}`;
   const done = loaded.get(key);
@@ -155,23 +181,26 @@ const loadFamily = (name: string, weights: number[]): string => {
   if (name.startsWith("file:")) {
     const file = name.slice(5);
     family = `Brand ${file.replace(/^.*\//, "").replace(/\.\w+$/, "")}`;
-    const handle = delayRender(`Loading font ${file}`);
-    new FontFace(family, `url('${staticFile(file)}')`)
-      .load()
-      .then((face) => {
-        // lib.dom leaves add() off FontFaceSet; every browser has it.
-        (document.fonts as unknown as { add: (f: FontFace) => void }).add(face);
-        continueRender(handle);
-      })
-      .catch((err) => cancelRender(err));
+    loadFace(family, staticFile(file), {});
   } else {
     const mod = GOOGLE_FONTS[name] as FontModule | undefined;
     if (mod) {
       const info = mod.getInfo();
-      const available = Object.keys(info.fonts.normal ?? {}).map(Number);
+      const normal = info.fonts.normal ?? {};
+      const available = Object.keys(normal).map(Number);
       const use = [...new Set(weights.map((w) => nearest(available, w)))];
-      const subsets = ["latin", "latin-ext"].filter((s) => s in info.unicodeRanges);
-      family = mod.loadFont("normal", { weights: use.map(String), subsets }).fontFamily;
+      family = info.fontFamily;
+      for (const weight of use) {
+        for (const subset of ["latin", "latin-ext"]) {
+          const url = normal[String(weight)]?.[subset];
+          if (!url) continue;
+          loadFace(family, url, {
+            weight: String(weight),
+            style: "normal",
+            unicodeRange: info.unicodeRanges[subset],
+          });
+        }
+      }
     }
   }
   loaded.set(key, family);

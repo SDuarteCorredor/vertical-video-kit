@@ -110,10 +110,23 @@ def check(brand: dict) -> list[str]:
     ratio = contrast(c["text"], c["bg"])
     if ratio < 4.5:
         problems.append(f"text on background is {ratio:.1f}:1 — under 4.5:1, hard to read on a phone")
-    for key in ("accent", "accent2"):
-        r = contrast(c[key], c["bg"])
-        if r < 1.8:
-            problems.append(f"{key} {c[key]} almost disappears on the background ({r:.1f}:1)")
+    r = contrast(c["accent"], c["bg"])
+    if r < 1.8:
+        problems.append(f"accent {c['accent']} almost disappears on the background ({r:.1f}:1)")
+    # accent2 is not only decoration: it is the colour of the kicker above a
+    # hook (32px), the @handle on the CTA and the big number on a stat scene.
+    # On a phone the canvas shrinks about 2.8x, so 32px reads as small text
+    # and needs 4.5:1 — a bright brand orange on white is usually under 3.
+    r = contrast(c["accent2"], c["bg"])
+    if r < 3:
+        problems.append(
+            f"accent2 {c['accent2']} is {r:.1f}:1 on the background — it colours the "
+            f"kicker, the @handle and stat numbers, and at that contrast they wash out. "
+            f"Use a darker shade of it from the brand manual as --accent2")
+    elif r < 4.5:
+        problems.append(
+            f"accent2 {c['accent2']} is {r:.1f}:1 on the background: fine for the big stat "
+            f"number, weak for the small kicker and @handle (4.5:1 is the target)")
     logo = brand.get("logo")
     if logo and not os.path.exists(os.path.join(ROOT, "public", logo)):
         problems.append(f"logo file public/{logo} does not exist")
