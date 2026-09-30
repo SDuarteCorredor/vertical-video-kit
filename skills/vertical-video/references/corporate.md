@@ -153,6 +153,10 @@ If a video is being made from an existing conversation, a strategy deck or a
 messaging doc, `BRAND.md` is where that context belongs. A brief that lives in
 a chat window is a brief that gets re-explained every time.
 
+Context that covers more than one video — what a company approved over
+months, its people, its unpublished numbers — goes in `private/` at the kit
+root instead. That folder is gitignored; the kit's repository is public.
+
 ## Platform, for a company account
 
 | | Fits | Watch out |

@@ -57,6 +57,28 @@ def find_template(explicit: str | None) -> str:
     return fetched
 
 
+def keep_out_of_kit_repo(target: str) -> None:
+    """Make a project created inside the kit invisible to the kit's git.
+
+    The kit is a public repository, and a project holds a company's logo,
+    brand colours and unpublished scripts. Only my-video/ was gitignored, so
+    a project called anything else went up with the next `git add -A`. A
+    .gitignore of "*" inside the project hides the whole folder, itself
+    included, whatever it is called. Outside the kit this does nothing.
+    """
+    kit = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    try:
+        inside = os.path.commonpath([target, kit]) == kit
+    except ValueError:  # different drives on Windows
+        inside = False
+    if not inside or not os.path.isdir(os.path.join(kit, ".git")):
+        return
+    with open(os.path.join(target, ".gitignore"), "w", encoding="utf-8") as handle:
+        handle.write("# This video is your work, not part of the kit — and the kit is a\n"
+                     "# public repository. Keep it out of it. Delete this file only if\n"
+                     "# you move the project into a private repository of its own.\n*\n")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -82,6 +104,8 @@ def main() -> None:
         ignore=shutil.ignore_patterns("node_modules", "audio", "output",
                                       "upload", "preview", "__pycache__"),
     )
+
+    keep_out_of_kit_repo(target)
 
     if args.engine or args.voice or args.lang:
         script_path = os.path.join(target, "script.json")

@@ -140,7 +140,7 @@ def naturalize(text: str, lang: str = "en", spell_acronyms: bool = True) -> str:
     for symbol, spoken in SYMBOLS[table]:
         out = out.replace(symbol, spoken)
 
-    # "asignar.com.co" -> "asignar punto com punto co"; otherwise it comes out
+    # "empresa.com.co" -> "empresa punto com punto co"; otherwise it comes out
     # as one word. Every label must hold a letter, so "1.500.000" is left alone.
     dot = f" {DOT.get(table, 'dot')} "
     out = re.sub(

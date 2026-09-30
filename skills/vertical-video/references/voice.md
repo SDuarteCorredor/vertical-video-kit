@@ -16,7 +16,7 @@ What it does for Spanish, since corporate copy is full of these:
 |---|---|
 | `$1.500.000 COP/mes` | 1.500.000 pesos al mes |
 | `US$99` | 99 dólares |
-| `hola@asignar.com.co` | hola arroba asignar punto com punto co |
+| `hola@empresa.com.co` | hola arroba empresa punto com punto co |
 | `RR.HH.`, `EE.UU.`, `Ltda.` | recursos humanos, Estados Unidos, limitada |
 | `48h`, `24/7`, `Q3` | 48 horas, veinticuatro siete, tercer trimestre |
 | `DIAN`, `SENA`, `NIT`, `SOAT` | said as words |
