@@ -102,6 +102,7 @@ re-recording and re-cutting.
 | Cut a long video into shorts | `skills/clip-cutter/SKILL.md` |
 | Edit phone footage into one video | `skills/footage-edit/SKILL.md` |
 | Study a reference video | `skills/reference-research/SKILL.md` |
+| Content strategy, series, ideas or scripts for a brand or creator; studying a batch of reference links | `skills/content-director/SKILL.md` |
 | Set the look: style, logo, colors, fonts, design system | `skills/vertical-video/references/style.md` |
 | Make a corporate / brand video | `skills/vertical-video/references/corporate.md` |
 | Lay anything out on screen | `skills/vertical-video/references/design.md` |

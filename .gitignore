@@ -25,6 +25,10 @@ sample.mp3
 /my-video/
 studio.log
 
+# Reference research (downloaded videos, frames, transcripts): third-party
+# material studied privately, never part of the kit.
+/research/
+
 # Company context — brand briefs, approved scripts, internal decisions —
 # for agents to read on this machine only. Never pushed. See AGENTS.md.
 /private/
@@ -46,3 +50,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# Santi's reels (personal work, never part of the public kit)
+/santi-reels/

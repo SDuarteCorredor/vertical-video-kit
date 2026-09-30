@@ -176,6 +176,7 @@ Full walkthrough for a machine with none of this installed:
 | `skills/clip-cutter` | A long horizontal video → vertical clips with burned captions |
 | `skills/footage-edit` | Phone takes → one video: straightened, stabilized, push-ins, color, crossfades |
 | `skills/reference-research` | Take apart a short that works and reuse its structure |
+| `skills/content-director` | Content director for any brand: diagnosis, shot-by-shot reference analysis, account outliers, series and scripts grounded in evidence |
 | `template/remotion-vertical` | The 9:16 Remotion project, scaffolded by `new_project.py` |
 | `AGENTS.md` | Entry point for Codex, Cursor, Gemini CLI, opencode, Copilot |
 | `install.py` | The one install command: dependencies, a project, the studio open |
