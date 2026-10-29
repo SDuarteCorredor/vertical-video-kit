@@ -182,6 +182,7 @@ Paso a paso para un computador donde no hay nada instalado:
 | `skills/footage-edit` | Tomas de celular → un solo video: enderezado, estabilizado, zoom lento, color y fundidos |
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `skills/content-director` | Director de contenido para cualquier marca: diagnóstico, análisis toma por toma de referentes, lo que más funcionó en cada cuenta, series y guiones basados en evidencia |
+| `skills/ai-video` | Tomas con IA dentro de un video real: hojas de personaje, prompts, reemplazar a una persona en tomas grabadas |
 | `template/remotion-vertical` | El proyecto Remotion 9:16 que copia `new_project.py` |
 | `AGENTS.md` | Punto de entrada para Codex, Cursor, Gemini CLI, opencode, Copilot |
 | `package.json` | Un solo Remotion compartido por todos los proyectos del kit (~340 MB una vez, no por video) |
