@@ -154,6 +154,77 @@ def machine_report() -> None:
         print("    rendering. It will finish, just slower than on a bigger machine.")
 
 
+def premiere_installs() -> list[str]:
+    """Adobe Premiere Pro versions installed here, newest last. Empty if none.
+
+    Clip selections are handed over as a Premiere XML (see the clip-selector
+    skill), so it is worth knowing whether the editor is on this machine.
+    """
+    roots = []
+    if sys.platform.startswith("win"):
+        for base in (os.environ.get("ProgramFiles", r"C:\Program Files"),
+                     os.environ.get("ProgramW6432", r"C:\Program Files")):
+            roots.append(os.path.join(base, "Adobe"))
+    elif sys.platform == "darwin":
+        roots.append("/Applications")
+    found = set()
+    for root in roots:
+        try:
+            for name in os.listdir(root):
+                if name.startswith("Adobe Premiere Pro"):
+                    found.add(name)
+        except OSError:
+            continue
+    return sorted(found)
+
+
+def gpu_name() -> str | None:
+    """The GPU, when it can be told cheaply. Premiere and Topaz lean on it."""
+    if has_command("nvidia-smi"):
+        try:
+            out = subprocess.run(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
+                                 capture_output=True, text=True, timeout=10)
+            name = out.stdout.strip().splitlines()
+            if name:
+                return name[0]
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    if sys.platform == "darwin":
+        try:
+            out = subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"],
+                                 capture_output=True, text=True, timeout=5)
+            brand = out.stdout.strip()
+            if brand.startswith("Apple"):
+                return f"{brand} (integrated GPU)"
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    return None
+
+
+def editing_report() -> None:
+    """The editing side: Premiere, GPU, disk. Informational, never fails."""
+    print("\n  Editing\n  " + "-" * 44)
+    installs = premiere_installs()
+    if installs:
+        print(f"  {'Premiere Pro':<16} {'ok':<8} {installs[-1]}")
+    elif sys.platform.startswith(("win", "darwin")):
+        print(f"  {'Premiere Pro':<16} {'-':<8} not found; selects still export as XML")
+    else:
+        print(f"  {'Premiere Pro':<16} {'-':<8} not available on Linux; XML opens elsewhere")
+    gpu = gpu_name()
+    print(f"  {'GPU':<16} {'ok' if gpu else '-':<8} {gpu or 'unknown (no nvidia-smi)'}")
+    try:
+        free = shutil.disk_usage(os.getcwd()).free / 1024 ** 3
+        print(f"  {'free disk':<16} {'ok' if free >= 50 else 'LOW':<8} {free:.0f} GB")
+        if free < 50:
+            print("    Raw footage and Premiere's media cache fill a disk fast;")
+            print("    50 GB free is a comfortable floor for a day of shooting.")
+    except OSError:
+        pass
+    print(f"  {'yt-dlp command':<16} {'ok' if has_command('yt-dlp') else '-':<8} "
+          "downloads (the Python package also works)")
+
+
 def voicestudio_up() -> tuple[bool, str]:
     try:
         with urllib.request.urlopen(
@@ -222,6 +293,7 @@ def main() -> None:
             subprocess.run([sys.executable, "-m", "pip", "install", "-q", package])
 
     machine_report()
+    editing_report()
 
     print("\n  Voice engines\n  " + "-" * 44)
     up, detail = voicestudio_up()

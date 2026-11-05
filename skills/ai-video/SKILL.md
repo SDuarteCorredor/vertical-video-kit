@@ -14,6 +14,12 @@ generator needs, writes the prompts, and takes the results back into the edit
 (**vertical-video** or **footage-edit**). The person runs the generations in
 their own account.
 
+**Check what the account is for before planning a single shot.** Read
+`private/` first: some people keep their paid AI-video account for work
+projects only, never for their personal brand. If this project falls outside
+what the account is for, don't propose generated shots at all; build it from
+real footage with the rest of the kit. When it isn't written down, ask.
+
 ## Decide what is really generated
 
 Go through the existing video shot by shot and put each one in one of four
