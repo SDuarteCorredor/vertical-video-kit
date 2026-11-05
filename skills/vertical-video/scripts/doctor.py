@@ -171,7 +171,10 @@ def premiere_installs() -> list[str]:
     for root in roots:
         try:
             for name in os.listdir(root):
-                if name.startswith("Adobe Premiere Pro"):
+                # Since version 26 (2026) the product is "Adobe Premiere"; older
+                # installs say "Premiere Pro". Elements and Rush are other apps.
+                if name.startswith("Adobe Premiere") and not any(
+                        other in name for other in ("Elements", "Rush")):
                     found.add(name)
         except OSError:
             continue
@@ -206,11 +209,11 @@ def editing_report() -> None:
     print("\n  Editing\n  " + "-" * 44)
     installs = premiere_installs()
     if installs:
-        print(f"  {'Premiere Pro':<16} {'ok':<8} {installs[-1]}")
+        print(f"  {'Premiere':<16} {'ok':<8} {installs[-1]}")
     elif sys.platform.startswith(("win", "darwin")):
-        print(f"  {'Premiere Pro':<16} {'-':<8} not found; selects still export as XML")
+        print(f"  {'Premiere':<16} {'-':<8} not found; selects still export as XML")
     else:
-        print(f"  {'Premiere Pro':<16} {'-':<8} not available on Linux; XML opens elsewhere")
+        print(f"  {'Premiere':<16} {'-':<8} not available on Linux; XML opens elsewhere")
     gpu = gpu_name()
     print(f"  {'GPU':<16} {'ok' if gpu else '-':<8} {gpu or 'unknown (no nvidia-smi)'}")
     try:
