@@ -100,6 +100,7 @@ re-recording and re-cutting.
 |---|---|
 | Make a vertical video from scratch | `skills/vertical-video/SKILL.md` |
 | Cut a long video into shorts | `skills/clip-cutter/SKILL.md` |
+| Choose the clips for someone who edits in Premiere (selects, no final cut) | `skills/clip-selector/SKILL.md` |
 | Edit phone footage into one video | `skills/footage-edit/SKILL.md` |
 | Study a reference video | `skills/reference-research/SKILL.md` |
 | Content strategy, series, ideas or scripts for a brand or creator; studying a batch of reference links | `skills/content-director/SKILL.md` |
