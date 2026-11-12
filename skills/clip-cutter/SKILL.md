@@ -69,6 +69,13 @@ Watch the first two seconds. That is where a repurposed clip usually fails:
 the speaker is mid-breath, or the first word is "and". Nudge `--start` a
 second later and cut again — it takes seconds.
 
+## When the person edits it themselves
+
+If they will finish the clips in Premiere Pro and only want the moments
+chosen, don't cut and caption here: use the **clip-selector** skill, which
+hands over the selection as a Premiere sequence with markers instead of
+rendered files.
+
 ## When to build instead of cut
 
 If the source has no usable hook, a cut clip will not gain one. Cases where

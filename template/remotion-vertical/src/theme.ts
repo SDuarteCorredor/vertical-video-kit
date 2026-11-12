@@ -275,12 +275,22 @@ export const STYLE_NAME = styleName;
  * band. Text that lands inside it is not "a bit tight" — it is unreadable for
  * most of the audience.
  */
-export const safe = {
-  top: 140,
-  bottom: 380,
-  right: 160,
-  left: 40,
+const SAFE_BY_PLACEMENT = {
+  feed: { top: 140, bottom: 380, right: 160, left: 40 },
+  // Instagram / Facebook Stories: no like/comment rail on the right, but the
+  // progress bar and profile row cover the top, and the reply / send bar the
+  // bottom. Text placed for a Reel sits under the profile row in a Story.
+  story: { top: 250, bottom: 340, right: 40, left: 40 },
 } as const;
+
+/**
+ * Where this video will be posted. "feed" covers TikTok, Reels and Shorts;
+ * "story" is Instagram / Facebook Stories. The safe areas, the captions and
+ * the SHOW_SAFE_AREAS overlay all follow it.
+ */
+export const PLACEMENT: keyof typeof SAFE_BY_PLACEMENT = "feed";
+
+export const safe = SAFE_BY_PLACEMENT[PLACEMENT];
 
 /**
  * The band the captions own. Scenes are padded out of it, so a long line of

@@ -14,6 +14,27 @@ draws its own interface on top of your video:
 | Right ~160px | always | like / comment / share / sound |
 | Top ~140px | usually | status bar, "Following \| For You" |
 
+**Stories are a different screen.** Instagram and Facebook Stories have no
+rail on the right, but they cover more of the top and keep a bar at the
+bottom:
+
+| Region | Reserved in a Story | What sits there |
+|---|---|---|
+| Top ~250px | always | progress bar, profile picture and name, close |
+| Bottom ~340px | always | "send message", like, share |
+| Right | nothing extra | — |
+
+Set `PLACEMENT = "story"` in `src/theme.ts` and the safe areas, captions and
+overlay switch to these numbers. A title placed for a Reel's top edge lands
+under the profile row in a Story.
+
+Stories are often posted as **several short clips**, each one a story of its
+own, with the person adding music in the app. When that is the ask, render
+once with `--muted` and cut the result on scene boundaries with FFmpeg
+(`trim=start_frame=…:end_frame=…`), so every piece starts on a fresh scene and
+its own text entrance. Give the last one, the one with the details, at least
+five or six seconds to be read.
+
 Those numbers are in `src/theme.ts` as `safe`. Nothing that must be read goes
 inside them. Backgrounds and decoration are fine there — text is not.
 

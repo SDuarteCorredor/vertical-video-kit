@@ -179,6 +179,7 @@ Paso a paso para un computador donde no hay nada instalado:
 |---|---|
 | `skills/vertical-video` | Guion → voz → subtítulos → render. La principal. |
 | `skills/clip-cutter` | Video horizontal largo → clips verticales con subtítulos quemados |
+| `skills/clip-selector` | Material en bruto → secuencia de selects para Premiere Pro (XML con marcadores), para cuando editas tú |
 | `skills/footage-edit` | Tomas de celular → un solo video: enderezado, estabilizado, zoom lento, color y fundidos |
 | `skills/reference-research` | Desarma un video que funciona y reutiliza su estructura |
 | `skills/content-director` | Director de contenido para cualquier marca: diagnóstico, análisis toma por toma de referentes, lo que más funcionó en cada cuenta, series y guiones basados en evidencia |
