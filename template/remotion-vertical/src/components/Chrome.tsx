@@ -190,7 +190,8 @@ export const ProgressBar: React.FC<{ totalFrames: number }> = ({
 
 /**
  * Turn on with SHOW_SAFE_AREAS in theme.ts while you lay a scene out.
- * The red bands are where TikTok and Reels put their own interface.
+ * The red bands are where TikTok and Reels put their own interface — or, with
+ * PLACEMENT = "story" in theme.ts, where Stories put theirs.
  */
 export const SafeAreaOverlay: React.FC = () => {
   const band: React.CSSProperties = {

@@ -158,7 +158,9 @@ accident, and never invent brand colors.
 the narration and writes `src/timings.json`; the components read it.
 
 **Nothing readable goes in the bottom ~380px or the right ~160px.** That is
-where TikTok and Reels draw their own interface. Set `SHOW_SAFE_AREAS = true`
+where TikTok and Reels draw their own interface. For Instagram/Facebook
+Stories it is the top ~250px and bottom ~340px instead: set
+`PLACEMENT = "story"` in `src/theme.ts`. Set `SHOW_SAFE_AREAS = true`
 in `src/theme.ts` and look before you claim a layout is fine.
 
 **Check with single frames, not full renders.** A render takes minutes, a frame

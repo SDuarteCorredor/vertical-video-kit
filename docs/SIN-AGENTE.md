@@ -380,7 +380,9 @@ despedida.
 
 **Nada importante abajo ni a la derecha.** TikTok y Reels tapan los ~380 px de
 abajo y los ~160 px de la derecha con su propia interfaz. Texto ahí no es "un
-poco apretado": es invisible.
+poco apretado": es invisible. En las **historias** de Instagram y Facebook
+cambia: se tapan los ~250 px de arriba y los ~340 px de abajo, y la derecha
+queda libre. Pon `PLACEMENT = "story"` en `src/theme.ts` y todo se acomoda.
 
 **Los subtítulos no son un adorno.** La mayoría de la gente ve el feed sin
 sonido. Si no hay subtítulos, no hay mensaje.
